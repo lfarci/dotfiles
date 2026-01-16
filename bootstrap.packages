@@ -1,0 +1,14 @@
+apt-transport-https
+ca-certificates
+git
+curl
+gnupg
+fzf
+lsb-release
+ripgrep
+powerline
+fonts-powerline
+bash-completion
+python3
+python3-pip
+python3-venv
