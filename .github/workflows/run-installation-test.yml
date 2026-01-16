@@ -10,9 +10,52 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Bootstrap plan summary
+        run: |
+          {
+            echo "## Bootstrap plan"
+            echo
+            echo "### Apt packages"
+            while IFS= read -r line || [ -n "$line" ]; do
+              case "$line" in
+                ""|\#*) continue ;;
+                *) echo "- $line" ;;
+              esac
+            done < bootstrap.packages
+            echo
+            echo "### Additional installers"
+            echo "- gh (GitHub CLI)"
+            echo "- az (Azure CLI)"
+            echo "- terraform (HashiCorp)"
+            echo "- azd (Azure Developer CLI)"
+            echo "- dotnet (.NET SDK)"
+            echo "- nvm/node (Node.js LTS)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          while IFS= read -r line || [ -n "$line" ]; do
+            case "$line" in
+              ""|\#*) continue ;;
+              *) echo "::notice title=Bootstrap package::$line" ;;
+            esac
+          done < bootstrap.packages
+
+          echo "::notice title=Bootstrap installer::gh (GitHub CLI)"
+          echo "::notice title=Bootstrap installer::az (Azure CLI)"
+          echo "::notice title=Bootstrap installer::terraform (HashiCorp)"
+          echo "::notice title=Bootstrap installer::azd (Azure Developer CLI)"
+          echo "::notice title=Bootstrap installer::dotnet (.NET SDK)"
+          echo "::notice title=Bootstrap installer::nvm/node (Node.js LTS)"
+
       - name: Build Docker image
         run: |
           docker build \
             --build-arg REPO_URL="https://github.com/${{ github.repository }}" \
             --build-arg REPO_REF="${{ github.sha }}" \
             -t dotfiles-bootstrap .
+
+      - name: Build summary
+        run: |
+          {
+            echo "### Result"
+            echo "- Docker build completed successfully."
+          } >> "$GITHUB_STEP_SUMMARY"
