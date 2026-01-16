@@ -1,0 +1,18 @@
+name: Manual Docker bootstrap
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker-bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg REPO_URL="https://github.com/${{ github.repository }}" \
+            --build-arg REPO_REF="${{ github.sha }}" \
+            -t dotfiles-bootstrap .
