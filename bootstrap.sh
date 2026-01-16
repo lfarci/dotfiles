@@ -69,7 +69,17 @@ if ! has_cmd terraform; then
 fi
 
 if ! has_cmd azd; then
-  curl -fsSL https://aka.ms/azd/install.sh | bash
+  azd_install="$(mktemp)"
+  if curl -fsSL https://aka.ms/azd/install.sh -o "$azd_install"; then
+    if head -n 1 "$azd_install" | grep -q "^#!"; then
+      bash "$azd_install"
+    else
+      echo "Warning: azd install script did not look like a shell script; skipping."
+    fi
+  else
+    echo "Warning: failed to download azd install script; skipping."
+  fi
+  rm -f "$azd_install"
 fi
 
 if ! has_cmd dotnet; then
