@@ -22,7 +22,6 @@ RUN command -v git \
   && command -v curl \
   && command -v fzf \
   && command -v rg \
-  && command -v powerline \
   && test -f /usr/share/bash-completion/bash_completion \
   && test -L "$HOME/.bashrc" \
   && test -L "$HOME/.bash_aliases"
