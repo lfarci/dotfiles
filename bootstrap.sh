@@ -104,7 +104,7 @@ detect_os() {
 OS="${DOTFILES_OS:-$(detect_os)}"
 log "Detected OS: $OS"
 
-OS_SCRIPT="$DOTFILES_DIR/os/$OS.sh"
+OS_SCRIPT="$DOTFILES_DIR/os/$OS/install.sh"
 if [[ -f "$OS_SCRIPT" ]]; then
   # shellcheck source=/dev/null
   source "$OS_SCRIPT"

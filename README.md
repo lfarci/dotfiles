@@ -4,6 +4,6 @@ Personal dotfiles for bash, git, and terminal prompt (Oh My Posh).
 
 ## Setup
 
-- [Windows (WSL)](docs/windows.md)
-- [Ubuntu](docs/ubuntu.md)
-- [Fedora](docs/fedora.md)
+- [Windows (WSL)](os/windows/README.md)
+- [Ubuntu](os/ubuntu/README.md)
+- [Fedora](os/fedora/README.md)
