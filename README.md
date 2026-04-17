@@ -1,10 +1,9 @@
 # Dotfiles
 
-Prompt uses Oh My Posh (replaces Powerline).
-Install instructions: https://ohmyposh.dev/docs/installation/linux
+Personal dotfiles for bash, git, and terminal prompt (Oh My Posh).
 
-## Fonts
+## Setup
 
-Oh My Posh requires a Nerd Font in your terminal.
-Install a Nerd Font and set it in your terminal profile (Windows Terminal for WSL).
-Docs: https://ohmyposh.dev/docs/installation/fonts
+- [Windows (WSL)](docs/windows.md)
+- [Ubuntu](docs/ubuntu.md)
+- [Fedora](docs/fedora.md)

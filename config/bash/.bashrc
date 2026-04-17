@@ -18,7 +18,7 @@ if [ -f /usr/share/bash-completion/bash_completion ]; then
   . /usr/share/bash-completion/bash_completion
 fi
 
-# Oh My Posh prompt (Linux)
+# Oh My Posh prompt
 # Docs: https://ohmyposh.dev/docs/installation/prompt
 if [[ $- == *i* ]] && command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init bash --config "$HOME/.config/ohmyposh/theme.omp.json")"

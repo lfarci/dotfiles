@@ -1,0 +1,8 @@
+ca-certificates
+git
+curl
+gnupg2
+fzf
+ripgrep
+unzip
+bash-completion

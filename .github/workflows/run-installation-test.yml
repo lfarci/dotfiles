@@ -6,13 +6,17 @@ on:
 jobs:
   docker-bootstrap:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu, fedora, wsl]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Build Docker image (${{ matrix.os }})
         run: |
           docker build \
             --build-arg REPO_URL="https://github.com/${{ github.repository }}" \
             --build-arg REPO_REF="${{ github.sha }}" \
-            -t dotfiles-bootstrap .
+            -f os/Dockerfile.${{ matrix.os }} \
+            -t dotfiles-bootstrap-${{ matrix.os }} .

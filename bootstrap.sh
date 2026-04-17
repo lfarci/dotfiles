@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-log() { printf "[dotfiles] %s\n" "$*"; }
+log()  { printf "[dotfiles] %s\n" "$*"; }
 warn() { printf "[dotfiles][warn] %s\n" "$*" >&2; }
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -26,8 +26,7 @@ backup_and_link() {
 
   if [[ -e "$dst" || -L "$dst" ]]; then
     if [[ -L "$dst" ]]; then
-      local current
-      local target
+      local current target
       current="$(readlink -f "$dst" 2>/dev/null || true)"
       target="$(readlink -f "$src" 2>/dev/null || true)"
       if [[ -n "$current" && -n "$target" && "$current" == "$target" ]]; then
@@ -45,10 +44,10 @@ backup_and_link() {
 
 link_all() {
   local mappings=(
-    ".bashrc:.bashrc"
-    ".bash_aliases:.bash_aliases"
-    ".gitconfig:.gitconfig"
-    ".config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json"
+    "config/bash/.bashrc:.bashrc"
+    "config/bash/.bash_aliases:.bash_aliases"
+    "config/git/.gitconfig:.gitconfig"
+    "config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json"
   )
 
   local entry src dst
@@ -59,40 +58,14 @@ link_all() {
   done
 }
 
-install_oh_my_posh_linux() {
-  ensure_oh_my_posh_init() {
-    local bashrc="$HOME/.bashrc"
-    if [[ ! -f "$bashrc" ]]; then
-      touch "$bashrc"
-    fi
-    if grep -Fq "oh-my-posh init bash" "$bashrc" 2>/dev/null; then
-      log "oh-my-posh init already configured in $bashrc"
-      return
-    fi
-    {
-      cat <<'EOF'
-
-# Oh My Posh prompt (Linux)
-# Docs: https://ohmyposh.dev/docs/installation/prompt
-if [[ $- == *i* ]] && command -v oh-my-posh >/dev/null 2>&1; then
-  eval "$(oh-my-posh init bash --config "$HOME/.config/ohmyposh/theme.omp.json")"
-fi
-EOF
-    } >> "$bashrc"
-    log "Added oh-my-posh init to $bashrc"
-  }
-
+install_oh_my_posh() {
   if command -v oh-my-posh >/dev/null 2>&1; then
-    ensure_oh_my_posh_init
-    return
-  fi
-
-  if [[ "$(uname -s)" != "Linux" ]]; then
+    log "oh-my-posh already installed"
     return
   fi
 
   local req
-  for req in curl unzip realpath dirname; do
+  for req in curl unzip; do
     if ! command -v "$req" >/dev/null 2>&1; then
       warn "$req not found; skipping oh-my-posh install"
       return
@@ -108,65 +81,36 @@ EOF
 
   if curl -fsSL https://ohmyposh.dev/install.sh | bash -s -- -d "$install_dir"; then
     log "Installed oh-my-posh to $install_dir"
-    ensure_oh_my_posh_init
   else
     warn "Failed to install oh-my-posh"
   fi
 }
 
-install_packages_apt() {
-  if [[ "$(uname -s)" != "Linux" ]]; then
+detect_os() {
+  if grep -qi microsoft /proc/version 2>/dev/null; then
+    echo "windows"
     return
   fi
-
-  if ! command -v apt-get >/dev/null 2>&1; then
-    warn "apt-get not found; skipping package install"
+  if [[ -f /etc/os-release ]]; then
+    # shellcheck source=/dev/null
+    local id
+    id="$(. /etc/os-release && echo "${ID:-}")"
+    echo "$id"
     return
   fi
-
-  local packages_file="$DOTFILES_DIR/bootstrap.packages"
-  if [[ ! -f "$packages_file" ]]; then
-    warn "Package list not found: $packages_file"
-    return
-  fi
-
-  local packages=()
-  local line trimmed
-  while IFS= read -r line || [[ -n "$line" ]]; do
-    line="${line%%#*}"
-    trimmed="${line#"${line%%[![:space:]]*}"}"
-    trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
-    if [[ -n "$trimmed" ]]; then
-      packages+=("$trimmed")
-    fi
-  done < "$packages_file"
-
-  if [[ "${#packages[@]}" -eq 0 ]]; then
-    warn "No packages listed in $packages_file"
-    return
-  fi
-
-  local sudo_cmd=()
-  if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
-    if command -v sudo >/dev/null 2>&1; then
-      sudo_cmd=(sudo)
-    else
-      warn "sudo not found; skipping package install"
-      return
-    fi
-  fi
-
-  log "Installing packages from $packages_file"
-  if ! "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get update; then
-    warn "Package update failed; skipping apt install"
-    return
-  fi
-
-  if ! "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get install -y "${packages[@]}"; then
-    warn "Package install failed"
-  fi
+  echo "unknown"
 }
 
-install_packages_apt
+OS="${DOTFILES_OS:-$(detect_os)}"
+log "Detected OS: $OS"
+
+OS_SCRIPT="$DOTFILES_DIR/os/$OS.sh"
+if [[ -f "$OS_SCRIPT" ]]; then
+  # shellcheck source=/dev/null
+  source "$OS_SCRIPT"
+else
+  warn "No OS script found for '$OS'; skipping package install"
+fi
+
+install_oh_my_posh
 link_all
-install_oh_my_posh_linux
