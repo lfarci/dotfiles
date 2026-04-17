@@ -7,3 +7,4 @@ lsb-release
 ripgrep
 unzip
 bash-completion
+eza

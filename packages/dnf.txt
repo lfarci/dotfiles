@@ -6,3 +6,4 @@ fzf
 ripgrep
 unzip
 bash-completion
+eza

@@ -48,6 +48,7 @@ link_all() {
     "config/bash/.bash_aliases:.bash_aliases"
     "config/git/.gitconfig:.gitconfig"
     "config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json"
+    "config/ghostty/config.ghostty:.config/ghostty/config.ghostty"
   )
 
   local entry src dst

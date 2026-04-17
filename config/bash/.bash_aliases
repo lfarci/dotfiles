@@ -1,6 +1,11 @@
 # ~/.bash_aliases
 
-alias ll='ls -alF'
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --icons'
+  alias ll='eza --icons -alF'
+else
+  alias ll='ls -alF'
+fi
 alias gs='git status -sb'
 alias cdc='cd /mnt/c'
 alias cdr='change_directory_to_first_match "/mnt/c/Development/Repos" "/mnt/c/Users/*/Development/Repos"'
