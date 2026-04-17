@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu, fedora, windows]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build Docker image (${{ matrix.os }})
         run: |
