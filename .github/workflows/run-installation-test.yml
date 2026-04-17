@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu, fedora, wsl]
+        os: [ubuntu, fedora, windows]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
