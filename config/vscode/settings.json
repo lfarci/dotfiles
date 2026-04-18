@@ -1,0 +1,19 @@
+{
+    "github-authentication.preferDeviceCodeFlow": true,
+    "github-authentication.useElectronFetch": false,
+    "chat.viewSessions.orientation": "stacked",
+    "chat.tools.urls.autoApprove": {
+        "https://raw.githubusercontent.com": {
+            "approveRequest": false,
+            "approveResponse": true
+        }
+    },
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "explorer.confirmDelete": false,
+    "security.workspace.trust.untrustedFiles": "newWindow",
+    "claudeCode.preferredLocation": "panel",
+    "workbench.iconTheme": "catppuccin-frappe",
+    "workbench.colorTheme": "Catppuccin Frappé"
+}

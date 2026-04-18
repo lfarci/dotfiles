@@ -49,6 +49,8 @@ link_all() {
     "config/git/.gitconfig:.gitconfig"
     "config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json"
     "config/ghostty/config.ghostty:.config/ghostty/config.ghostty"
+    "config/vscode/settings.json:.config/Code/User/settings.json"
+    "config/vscode/keybindings.json:.config/Code/User/keybindings.json"
   )
 
   local entry src dst
