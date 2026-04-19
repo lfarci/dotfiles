@@ -51,6 +51,7 @@ link_all() {
     "config/ghostty/config.ghostty:.config/ghostty/config.ghostty"
     "config/vscode/settings.json:.config/Code/User/settings.json"
     "config/vscode/keybindings.json:.config/Code/User/keybindings.json"
+    "config/agents:.agents"
   )
 
   local entry src dst
