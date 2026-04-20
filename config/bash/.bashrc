@@ -23,3 +23,7 @@ fi
 if [[ $- == *i* ]] && command -v oh-my-posh >/dev/null 2>&1; then
   eval "$(oh-my-posh init bash --config "$HOME/.config/ohmyposh/theme.omp.json")"
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

@@ -1,40 +1,83 @@
-# Windows (WSL) Setup
+# Windows Setup
 
-These dotfiles run inside WSL (Windows Subsystem for Linux). The bootstrap script installs packages and symlinks configs into the WSL home directory.
+Two phases: first bootstrap the native Windows environment with `bootstrap.ps1`, then set up WSL separately using `bootstrap.sh`.
 
-## Prerequisites
+## Phase 1 — Windows (PowerShell)
 
-- WSL 2 installed with Ubuntu (recommended) or another supported distro
-- A [Nerd Font](https://ohmyposh.dev/docs/installation/fonts) installed on Windows and set in Windows Terminal
+### Prerequisites
 
-## Install
+- Windows 10 (build 1903+) or Windows 11
+- **winget** — ships with [App Installer](https://apps.microsoft.com/detail/9nblggh4nns1) (pre-installed on Windows 11)
+- **Symbolic link capability** — either:
+  - Enable Developer Mode: **Settings → System → For developers → Developer Mode**
+  - Or run PowerShell as Administrator
 
-Open a WSL terminal and run:
+### Install
+
+Open **PowerShell 7 (`pwsh`)** (recommended) or Windows PowerShell 5.1 and run:
+
+```powershell
+git clone https://github.com/lfarci/dotfiles.git $HOME\dotfiles
+cd $HOME\dotfiles
+pwsh -ExecutionPolicy Bypass -File .\bootstrap.ps1
+```
+
+Restart your terminal when done.
+
+### What gets installed (via winget)
+
+| Package | winget ID |
+|---------|-----------|
+| Git | `Git.Git` |
+| Visual Studio Code | `Microsoft.VisualStudioCode` |
+| Windows Terminal | `Microsoft.WindowsTerminal` |
+| Node.js LTS | `OpenJS.NodeJS.LTS` |
+| Oh My Posh | `JanDeDobbeleer.OhMyPosh` |
+| ripgrep | `BurntSushi.ripgrep.MSVC` |
+| fzf | `junegunn.fzf` |
+| eza | `eza-community.eza` |
+
+### What gets configured
+
+- **JetBrainsMono Nerd Font** installed (user-level, no admin needed)
+- **Oh My Posh** added to both PowerShell 5.1 and PowerShell 7 profiles
+- Config files symlinked:
+
+| Source | Destination |
+|--------|-------------|
+| `config/git/.gitconfig` | `~\.gitconfig` |
+| `config/git/.gitignore_global` | `~\.gitignore_global` |
+| `config/ohmyposh/theme.omp.json` | `~\.config\ohmyposh\theme.omp.json` |
+| `config/vscode/settings.json` | `%APPDATA%\Code\User\settings.json` |
+| `config/vscode/keybindings.json` | `%APPDATA%\Code\User\keybindings.json` |
+| `config/windows-terminal/settings.json` | Windows Terminal `settings.json` |
+| `config/agents` | `~\.agents` |
+| `config/claude/settings.json` | `~\.claude\settings.json` |
+
+### Windows Terminal settings
+
+`bootstrap.ps1` now links the repo-managed Windows Terminal settings file into the active Windows Terminal settings location. It checks the stable Store path first, then Preview, then the unpackaged path under `%LOCALAPPDATA%`.
+
+The tracked file already keeps `JetBrainsMono Nerd Font` configured for the current profiles.
+
+---
+
+## Phase 2 — WSL
+
+Once the Windows environment is set up, install WSL and run `bootstrap.sh` inside it:
 
 ```bash
+# In a WSL terminal
 git clone https://github.com/lfarci/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 ./bootstrap.sh
 ```
 
-Restart your terminal for all changes to take effect.
-
-## What gets installed
-
-- Packages from `packages/apt.txt` via `apt`
-- [Oh My Posh](https://ohmyposh.dev) prompt to `~/.local/bin`
-
-## What gets symlinked
-
-| Source | Destination |
-|--------|-------------|
-| `config/bash/.bashrc` | `~/.bashrc` |
-| `config/bash/.bash_aliases` | `~/.bash_aliases` |
-| `config/git/.gitconfig` | `~/.gitconfig` |
-| `config/ohmyposh/theme.omp.json` | `~/.config/ohmyposh/theme.omp.json` |
+See the [WSL docs](https://learn.microsoft.com/en-us/windows/wsl/install) for installing WSL.
 
 ## Notes
 
-- Run `source ~/.bashrc` or restart the terminal after the first install.
-- The `cdc` and `cdr` aliases navigate to common Windows paths under `/mnt/c`.
 - Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
+- The `bootstrap.ps1` backs up any pre-existing config files to `~/.dotfiles_backup_<timestamp>/`.
+- Windows Terminal changes should be made in `config/windows-terminal/settings.json` so they stay in the repo.
+

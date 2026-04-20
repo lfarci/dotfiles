@@ -1,0 +1,8 @@
+Git.Git
+Microsoft.VisualStudioCode
+Microsoft.WindowsTerminal
+OpenJS.NodeJS.LTS
+JanDeDobbeleer.OhMyPosh
+BurntSushi.ripgrep.MSVC
+junegunn.fzf
+eza-community.eza
