@@ -7,3 +7,4 @@ ripgrep
 unzip
 bash-completion
 eza
+nodejs

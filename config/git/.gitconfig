@@ -5,6 +5,17 @@
 [init]
   defaultBranch = main
 
+[core]
+  excludesfile = ~/.gitignore_global
+
+[alias]
+  co = checkout
+  br = branch
+  st = status -sb
+  lg = log --oneline --graph --decorate --all
+  rb = rebase
+  undo = reset --soft HEAD~1
+
 [include]
   path = ~/.gitconfig.local
 [credential "https://github.com"]

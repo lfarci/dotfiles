@@ -1,0 +1,13 @@
+# Case-insensitive tab completion
+set completion-ignore-case on
+
+# Show all completions on first tab press instead of second
+set show-all-if-ambiguous on
+
+# History search with arrow keys
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# History search with Ctrl+P / Ctrl+N
+"\C-p": history-search-backward
+"\C-n": history-search-forward

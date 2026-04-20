@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+.fleet/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+node_modules/
+__pycache__/
+*.py[cod]
+*.class
+dist/
+build/
+out/
+target/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+Thumbs.db
+Desktop.ini

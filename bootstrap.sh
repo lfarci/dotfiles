@@ -51,7 +51,10 @@ link_all() {
     "config/ghostty/config.ghostty:.config/ghostty/config.ghostty"
     "config/vscode/settings.json:.config/Code/User/settings.json"
     "config/vscode/keybindings.json:.config/Code/User/keybindings.json"
+    "config/git/.gitignore_global:.gitignore_global"
+    "config/bash/.inputrc:.inputrc"
     "config/agents:.agents"
+    "config/claude/settings.json:.claude/settings.json"
   )
 
   local entry src dst
@@ -116,5 +119,26 @@ else
   warn "No OS script found for '$OS'; skipping package install"
 fi
 
+install_skills() {
+  if ! command -v npx >/dev/null 2>&1; then
+    warn "npx not found; skipping skills restore"
+    return
+  fi
+
+  local lock_file="$HOME/.agents/.skill-lock.json"
+  if [[ ! -f "$lock_file" ]]; then
+    log "No .skill-lock.json found; skipping skills restore"
+    return
+  fi
+
+  log "Restoring skills from .skill-lock.json..."
+  if (cd "$HOME/.agents" && npx skills experimental_install -y); then
+    log "Skills restored"
+  else
+    warn "Skills restore failed"
+  fi
+}
+
 install_oh_my_posh
 link_all
+install_skills
