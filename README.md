@@ -1,6 +1,6 @@
 # Dotfiles
 
-Personal dotfiles for bash, git, and terminal prompt (Oh My Posh).
+Personal dotfiles for bash, git, terminal prompt (Oh My Posh), and VS Code config.
 
 ## Setup
 

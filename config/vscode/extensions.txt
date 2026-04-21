@@ -1,0 +1,3 @@
+# VS Code Marketplace extension IDs installed by the bootstrap scripts.
+catppuccin.catppuccin-vsc
+PKief.material-icon-theme

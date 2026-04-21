@@ -41,6 +41,7 @@ Restart your terminal when done.
 
 - **JetBrainsMono Nerd Font** installed (user-level, no admin needed)
 - **Oh My Posh** added to both PowerShell 5.1 and PowerShell 7 profiles
+- **VS Code extensions** installed from `config\vscode\extensions.txt`
 - Config files symlinked:
 
 | Source | Destination |
@@ -80,4 +81,3 @@ See the [WSL docs](https://learn.microsoft.com/en-us/windows/wsl/install) for in
 - Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
 - The `bootstrap.ps1` backs up any pre-existing config files to `~/.dotfiles_backup_<timestamp>/`.
 - Windows Terminal changes should be made in `config/windows-terminal/settings.json` so they stay in the repo.
-
