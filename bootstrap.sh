@@ -93,6 +93,50 @@ install_oh_my_posh() {
   fi
 }
 
+install_vscode_extensions() {
+  if ! command -v code >/dev/null 2>&1; then
+    warn "VS Code CLI 'code' not found on PATH"
+    warn "Ensure VS Code is installed from the package list and PATH has been refreshed"
+    exit 1
+  fi
+
+  local extensions_file="$DOTFILES_DIR/config/vscode/extensions.txt"
+  if [[ ! -f "$extensions_file" ]]; then
+    warn "VS Code extension list not found: $extensions_file"
+    exit 1
+  fi
+
+  local extensions=()
+  local line cleaned
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    cleaned="$(printf '%s\n' "$line" | sed 's/#.*$//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')"
+    if [[ -n "$cleaned" ]]; then
+      extensions+=("$cleaned")
+    fi
+  done < "$extensions_file"
+
+  if [[ ${#extensions[@]} -eq 0 ]]; then
+    warn "No VS Code extensions listed in $extensions_file"
+    return
+  fi
+
+  local failed=()
+  local extension
+  log "Installing VS Code extensions..."
+  for extension in "${extensions[@]}"; do
+    log "  $extension"
+    if ! code --install-extension "$extension"; then
+      warn "  failed to install $extension"
+      failed+=("$extension")
+    fi
+  done
+
+  if [[ ${#failed[@]} -gt 0 ]]; then
+    warn "Failed to install VS Code extensions: ${failed[*]}"
+    exit 1
+  fi
+}
+
 detect_os() {
   if grep -qi microsoft /proc/version 2>/dev/null; then
     echo "windows"
@@ -138,6 +182,8 @@ install_skills() {
     warn "Skills restore failed"
   fi
 }
+
+install_vscode_extensions
 
 install_oh_my_posh
 link_all

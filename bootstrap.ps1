@@ -100,6 +100,42 @@ function Install-NerdFont {
     }
 }
 
+function Install-VSCodeExtensions {
+    if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
+        throw "VS Code CLI 'code' not found on PATH. Ensure VS Code is installed from the package list and PATH has been refreshed."
+    }
+
+    $extensionsFile = Join-Path $DotfilesDir 'config\vscode\extensions.txt'
+    if (-not (Test-Path $extensionsFile)) {
+        throw "VS Code extension list not found: $extensionsFile"
+    }
+
+    $extensions = Get-Content $extensionsFile |
+        ForEach-Object { ($_ -replace '#.*$', '').Trim() } |
+        Where-Object   { $_ -ne '' }
+
+    if (-not $extensions) {
+        Warn "No VS Code extensions listed in $extensionsFile"
+        return
+    }
+
+    $failed = New-Object System.Collections.Generic.List[string]
+
+    Log "Installing VS Code extensions..."
+    foreach ($extension in $extensions) {
+        Log "  $extension"
+        code --install-extension $extension
+        if ($LASTEXITCODE -ne 0) {
+            Warn "  extension install exited $LASTEXITCODE for $extension"
+            $failed.Add($extension) | Out-Null
+        }
+    }
+
+    if ($failed.Count -gt 0) {
+        throw "Failed to install VS Code extensions: $($failed -join ', ')"
+    }
+}
+
 # ── Symlink helpers ─────────────────────────────────────────────────────────
 
 function Backup-AndLink {
@@ -251,6 +287,7 @@ function Set-OhMyPoshProfile {
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 Install-WingetPackages
+Install-VSCodeExtensions
 Install-NerdFont
 Link-All
 Restore-Skills

@@ -70,5 +70,6 @@
       "approveRequest": false,
       "approveResponse": true
     }
-  }
+  },
+  "githubLocalActions.dockerDesktopPath": "C:/Program Files/Docker/Docker/Docker Desktop.exe"
 }
