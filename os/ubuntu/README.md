@@ -19,6 +19,7 @@ Restart your terminal for all changes to take effect.
 
 - Packages from `packages/apt.txt` via `apt`
 - [Oh My Posh](https://ohmyposh.dev) prompt to `~/.local/bin`
+- VS Code extensions from `config/vscode/extensions.txt` when the `code` CLI is available
 
 ## What gets symlinked
 
@@ -28,6 +29,8 @@ Restart your terminal for all changes to take effect.
 | `config/bash/.bash_aliases` | `~/.bash_aliases` |
 | `config/git/.gitconfig` | `~/.gitconfig` |
 | `config/ohmyposh/theme.omp.json` | `~/.config/ohmyposh/theme.omp.json` |
+| `config/vscode/settings.json` | `~/.config/Code/User/settings.json` |
+| `config/vscode/keybindings.json` | `~/.config/Code/User/keybindings.json` |
 
 ## Notes
 

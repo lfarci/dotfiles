@@ -205,6 +205,40 @@ function Restore-Skills {
     }
 }
 
+# ── VS Code extensions ────────────────────────────────────────────────────────
+
+function Install-VsCodeExtensions {
+    $extensionsFile = Join-Path $DotfilesDir 'config\vscode\extensions.txt'
+    if (-not (Test-Path $extensionsFile)) {
+        Warn "VS Code extension list not found: $extensionsFile"
+        return
+    }
+
+    $codeCommand = Get-Command code -ErrorAction SilentlyContinue
+    if (-not $codeCommand) {
+        Warn "VS Code CLI 'code' not found; skipping extension install."
+        return
+    }
+
+    $extensions = Get-Content $extensionsFile |
+        ForEach-Object { ($_ -replace '#.*$', '').Trim() } |
+        Where-Object   { $_ -ne '' }
+
+    if (-not $extensions) {
+        Warn "No VS Code extensions listed in $extensionsFile"
+        return
+    }
+
+    Log "Installing VS Code extensions..."
+    foreach ($extension in $extensions) {
+        Log "  $extension"
+        & $codeCommand.Source --install-extension $extension --force
+        if ($LASTEXITCODE -ne 0) {
+            Warn "  VS Code extension install exited $LASTEXITCODE for $extension"
+        }
+    }
+}
+
 # ── PowerShell profile ──────────────────────────────────────────────────────
 
 function Add-OhMyPoshToProfile {
@@ -253,6 +287,7 @@ function Set-OhMyPoshProfile {
 Install-WingetPackages
 Install-NerdFont
 Link-All
+Install-VsCodeExtensions
 Restore-Skills
 Set-OhMyPoshProfile
 

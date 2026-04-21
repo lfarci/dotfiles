@@ -139,6 +139,43 @@ install_skills() {
   fi
 }
 
+install_vscode_extensions() {
+  local extensions_file="$DOTFILES_DIR/config/vscode/extensions.txt"
+  if [[ ! -f "$extensions_file" ]]; then
+    warn "VS Code extension list not found: $extensions_file"
+    return
+  fi
+
+  if ! command -v code >/dev/null 2>&1; then
+    warn "VS Code CLI 'code' not found; skipping extension install"
+    return
+  fi
+
+  local extensions=()
+  local line trimmed
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    trimmed="${line#"${line%%[![:space:]]*}"}"
+    trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+    [[ -n "$trimmed" ]] && extensions+=("$trimmed")
+  done < "$extensions_file"
+
+  if [[ "${#extensions[@]}" -eq 0 ]]; then
+    warn "No VS Code extensions listed in $extensions_file"
+    return
+  fi
+
+  local extension
+  log "Installing VS Code extensions..."
+  for extension in "${extensions[@]}"; do
+    log "  $extension"
+    if ! code --install-extension "$extension" --force; then
+      warn "  Failed to install VS Code extension: $extension"
+    fi
+  done
+}
+
 install_oh_my_posh
 link_all
+install_vscode_extensions
 install_skills
