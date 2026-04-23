@@ -8,7 +8,7 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
       "installedAt": "2026-04-19T23:26:08.769Z",
-      "updatedAt": "2026-04-19T23:26:08.769Z"
+      "updatedAt": "2026-04-23T13:39:49.048Z"
     },
     "frontend-design": {
       "source": "anthropics/skills",
@@ -104,7 +104,32 @@
       "pluginName": "example-skills",
       "installedAt": "2026-04-20T00:03:00.021Z",
       "updatedAt": "2026-04-20T00:03:00.021Z"
+    },
+    "product-brainstorming": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/knowledge-work-plugins.git",
+      "skillPath": "product-management/skills/product-brainstorming/SKILL.md",
+      "skillFolderHash": "87927826dc1b27c4c9e84b88be10f3dc383a3e4b",
+      "installedAt": "2026-04-23T13:39:34.309Z",
+      "updatedAt": "2026-04-23T13:39:34.309Z"
     }
   },
-  "dismissed": {}
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "antigravity",
+    "cline",
+    "codex",
+    "cursor",
+    "deepagents",
+    "firebender",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode",
+    "warp"
+  ]
 }
