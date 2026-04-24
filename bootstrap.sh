@@ -42,6 +42,23 @@ backup_and_link() {
   log "Linked $dst -> $src"
 }
 
+seed_gitconfig_local() {
+  local src="$DOTFILES_DIR/config/git/.gitconfig.local.example"
+  local dst="$HOME/.gitconfig.local"
+
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    return
+  fi
+
+  if [[ ! -f "$src" ]]; then
+    warn "Local Git config example missing: $src"
+    return
+  fi
+
+  cp "$src" "$dst"
+  log "Created $dst from $src"
+}
+
 link_all() {
   local mappings=(
     "config/bash/.bashrc:.bashrc"
@@ -63,6 +80,8 @@ link_all() {
     dst="${entry#*:}"
     backup_and_link "$src" "$dst"
   done
+
+  seed_gitconfig_local
 }
 
 install_oh_my_posh() {

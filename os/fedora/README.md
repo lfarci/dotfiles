@@ -32,4 +32,4 @@ Restart your terminal for all changes to take effect.
 ## Notes
 
 - Run `source ~/.bashrc` or restart the terminal after the first install.
-- Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
+- Git identity, credential helper, and other client-specific overrides go in `~/.gitconfig.local`, which is included automatically. See `config/git/.gitconfig.local.example` for a starting point.

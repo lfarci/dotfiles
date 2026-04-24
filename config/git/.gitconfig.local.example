@@ -1,0 +1,14 @@
+# Copy this file to ~/.gitconfig.local for machine- or client-specific Git settings.
+
+[credential "https://github.com"]
+  helper =
+  helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+  helper =
+  helper = !gh auth git-credential
+
+# Client-specific hosts belong here too.
+#[credential "https://example.ghe.com"]
+#  helper =
+#  helper = !gh auth git-credential

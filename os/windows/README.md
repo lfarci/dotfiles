@@ -77,7 +77,7 @@ See the [WSL docs](https://learn.microsoft.com/en-us/windows/wsl/install) for in
 
 ## Notes
 
-- Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
+- Git identity, credential helper, and other client-specific overrides go in `~/.gitconfig.local`, which is included automatically. See `config/git/.gitconfig.local.example` for a starting point.
 - The `bootstrap.ps1` backs up any pre-existing config files to `~/.dotfiles_backup_<timestamp>/`.
 - Windows Terminal changes should be made in `config/windows-terminal/settings.json` so they stay in the repo.
 

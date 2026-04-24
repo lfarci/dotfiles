@@ -184,6 +184,23 @@ function Backup-AndLink {
     Log "Linked $Dst -> $Src"
 }
 
+function Seed-GitConfigLocal {
+    $src = Join-Path $DotfilesDir 'config\git\.gitconfig.local.example'
+    $dst = Join-Path $HOME '.gitconfig.local'
+
+    if (Test-Path $Dst -PathType Any) {
+        return
+    }
+
+    if (-not (Test-Path $src -PathType Leaf)) {
+        Warn "Local Git config example missing: $src"
+        return
+    }
+
+    Copy-Item -Path $src -Destination $dst
+    Log "Created $dst from $src"
+}
+
 function Get-WindowsTerminalSettingsPath {
     $candidates = @(
         "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
@@ -217,6 +234,8 @@ function Link-All {
         $src = Join-Path $DotfilesDir $m.Src
         Backup-AndLink -Src $src -Dst $m.Dst
     }
+
+    Seed-GitConfigLocal
 }
 
 # ── Skills restore ──────────────────────────────────────────────────────────
