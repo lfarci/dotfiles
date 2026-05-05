@@ -113,6 +113,15 @@
       "skillFolderHash": "437437f7f20bcdbbdb3081cf164435a388c0a39a",
       "installedAt": "2026-04-22T20:39:21.391Z",
       "updatedAt": "2026-04-22T20:39:21.391Z"
+    },
+    "flouz": {
+      "source": "lfarci/flouz",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/lfarci/flouz.git",
+      "skillPath": "skills/flouz/SKILL.md",
+      "skillFolderHash": "fe8d4ec82540141a3ec00ee7da6fa7d4f58a393f",
+      "installedAt": "2026-05-02T18:57:54.852Z",
+      "updatedAt": "2026-05-02T19:00:52.127Z"
     }
   },
   "dismissed": {
@@ -125,6 +134,7 @@
     "codex",
     "cursor",
     "deepagents",
+    "dexto",
     "firebender",
     "gemini-cli",
     "github-copilot",
