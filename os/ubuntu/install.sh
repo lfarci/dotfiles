@@ -42,4 +42,43 @@ install_packages() {
   fi
 }
 
+install_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    log "docker already installed"
+    return
+  fi
+
+  local sudo_cmd=()
+  if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+    if command -v sudo >/dev/null 2>&1; then
+      sudo_cmd=(sudo)
+    else
+      warn "sudo not found; skipping docker install"
+      return
+    fi
+  fi
+
+  log "Installing Docker..."
+  if ! curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+       "${sudo_cmd[@]}" gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; then
+    warn "Failed to add Docker GPG key"
+    return
+  fi
+
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    "${sudo_cmd[@]}" tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+  if "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get update && \
+     "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get install -y \
+       docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+    "${sudo_cmd[@]}" systemctl enable --now docker
+    "${sudo_cmd[@]}" usermod -aG docker "$USER" && log "Added $USER to docker group"
+    log "Installed Docker"
+  else
+    warn "Failed to install Docker"
+  fi
+}
+
 install_packages
+install_docker

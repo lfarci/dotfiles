@@ -139,6 +139,38 @@ install_skills() {
   fi
 }
 
+install_nvm_node() {
+  local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
+
+  if [[ ! -d "$nvm_dir" ]]; then
+    log "Installing nvm..."
+    if ! curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash; then
+      warn "Failed to install nvm"
+      return
+    fi
+    log "Installed nvm"
+  else
+    log "nvm already installed"
+  fi
+
+  export NVM_DIR="$nvm_dir"
+  # shellcheck source=/dev/null
+  [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+
+  if ! type nvm &>/dev/null; then
+    warn "nvm not available after install; skipping Node LTS install"
+    return
+  fi
+
+  log "Installing latest Node LTS..."
+  if nvm install --lts && nvm use --lts; then
+    log "Installed Node LTS: $(node --version)"
+  else
+    warn "Failed to install Node LTS"
+  fi
+}
+
 install_oh_my_posh
 link_all
+install_nvm_node
 install_skills

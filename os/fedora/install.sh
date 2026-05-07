@@ -62,5 +62,34 @@ install_ghostty() {
   fi
 }
 
+install_docker() {
+  if command -v docker >/dev/null 2>&1; then
+    log "docker already installed"
+    return
+  fi
+
+  local sudo_cmd=()
+  if [[ "${EUID:-$(id -u)}" -ne 0 ]]; then
+    if command -v sudo >/dev/null 2>&1; then
+      sudo_cmd=(sudo)
+    else
+      warn "sudo not found; skipping docker install"
+      return
+    fi
+  fi
+
+  log "Installing Docker..."
+  if "${sudo_cmd[@]}" dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo && \
+     "${sudo_cmd[@]}" dnf install -y \
+       docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+    "${sudo_cmd[@]}" systemctl enable --now docker
+    "${sudo_cmd[@]}" usermod -aG docker "$USER" && log "Added $USER to docker group"
+    log "Installed Docker"
+  else
+    warn "Failed to install Docker"
+  fi
+}
+
 install_packages
 install_ghostty
+install_docker
