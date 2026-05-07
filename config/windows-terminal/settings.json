@@ -1,89 +1,94 @@
 {
-  "$help": "https://aka.ms/terminal-documentation",
-  "$schema": "https://aka.ms/terminal-profiles-schema",
-  "actions": [
-    {
-      "command": {
-        "action": "copy",
-        "singleLine": false
-      },
-      "id": "User.copy.644BA8F2"
-    },
-    {
-      "command": "paste",
-      "id": "User.paste"
-    },
-    {
-      "command": {
-        "action": "splitPane",
-        "split": "auto",
-        "splitMode": "duplicate"
-      },
-      "id": "User.splitPane.A6751878"
-    },
-    {
-      "command": "find",
-      "id": "User.find"
-    }
-  ],
-  "copyFormatting": "none",
-  "copyOnSelect": false,
-  "defaultProfile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
-  "keybindings": [
-    {
-      "id": "User.copy.644BA8F2",
-      "keys": "ctrl+c"
-    },
-    {
-      "id": "User.paste",
-      "keys": "ctrl+v"
-    },
-    {
-      "id": "User.find",
-      "keys": "ctrl+shift+f"
-    },
-    {
-      "id": "User.splitPane.A6751878",
-      "keys": "alt+shift+d"
-    }
-  ],
-  "newTabMenu": [
-    {
-      "type": "remainingProfiles"
-    }
-  ],
-  "profiles": {
-    "defaults": {},
-    "list": [
-      {
-        "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "font": {
-          "face": "JetBrainsMono Nerd Font"
+    "$help": "https://aka.ms/terminal-documentation",
+    "$schema": "https://aka.ms/terminal-profiles-schema",
+    "actions": 
+    [
+        {
+            "command": 
+            {
+                "action": "copy",
+                "singleLine": false
+            },
+            "id": "User.copy.644BA8F2"
         },
-        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-        "hidden": false,
-        "name": "Windows PowerShell"
-      },
-      {
-        "bellStyle": [
-          "window",
-          "taskbar"
-        ],
-        "font": {
-          "face": "JetBrainsMono Nerd Font"
+        {
+            "command": "paste",
+            "id": "User.paste"
         },
-        "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
-        "hidden": false,
-        "name": "Ubuntu 24.04.1 LTS",
-        "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
-      },
-      {
-        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-        "hidden": false,
-        "name": "Command Prompt"
-      }
-    ]
-  },
-  "schemes": [],
-  "themes": []
+        {
+            "command": "find",
+            "id": "User.find"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878"
+        }
+    ],
+    "copyFormatting": "none",
+    "copyOnSelect": false,
+    "defaultProfile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+    "keybindings": 
+    [
+        {
+            "id": "User.copy.644BA8F2",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": "User.find",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": "User.paste",
+            "keys": "ctrl+v"
+        },
+        {
+            "id": "User.splitPane.A6751878",
+            "keys": "alt+shift+d"
+        }
+    ],
+    "newTabMenu": 
+    [
+        {
+            "type": "remainingProfiles"
+        }
+    ],
+    "profiles": 
+    {
+        "defaults": {},
+        "list": 
+        [
+            {
+                "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                "font": 
+                {
+                    "face": "JetBrainsMono Nerd Font"
+                },
+                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+                "hidden": false,
+                "name": "Windows PowerShell"
+            },
+            {
+                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+                "hidden": false,
+                "name": "Command Prompt"
+            },
+            {
+                "font": 
+                {
+                    "face": "JetBrainsMono Nerd Font"
+                },
+                "guid": "{adb170ec-f26b-5bd1-8b2b-898d0a8b764e}",
+                "hidden": false,
+                "name": "Ubuntu-26.04",
+                "source": "Microsoft.WSL"
+            }
+        ]
+    },
+    "schemes": [],
+    "themes": []
 }
