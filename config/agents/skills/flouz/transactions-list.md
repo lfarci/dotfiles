@@ -25,4 +25,4 @@ Options:
 
 `--category` and `--uncategorized` are mutually exclusive.
 
-JSON fields: `date`, `amount` (string with explicit sign, e.g. `+10.00` or `-42.50`), `counterparty`, `bankCommunication`, `category`
+JSON fields: `date`, `amount` (string with explicit sign, e.g. `+10.00` or `-42.50`), `counterparty`, `note` (user comment, if any), `category`

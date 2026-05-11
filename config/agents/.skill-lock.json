@@ -18,7 +18,7 @@
       "skillFolderHash": "928950704df8a8b885c03de5da626331e6f29cf8",
       "pluginName": "example-skills",
       "installedAt": "2026-04-19T23:53:21.984Z",
-      "updatedAt": "2026-04-19T23:53:21.984Z"
+      "updatedAt": "2026-05-10T20:26:31.016Z"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
@@ -34,9 +34,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/obra/superpowers.git",
       "skillPath": "skills/using-git-worktrees/SKILL.md",
-      "skillFolderHash": "a5b3f5965f321175a7f07dcadff0bb79adb9e9f7",
+      "skillFolderHash": "13a9643fb9e4b236173f7d4b56b15dac10394f1b",
       "installedAt": "2026-04-20T00:02:16.365Z",
-      "updatedAt": "2026-04-20T00:02:16.365Z"
+      "updatedAt": "2026-05-11T18:34:11.118Z"
     },
     "brainstorming": {
       "source": "obra/superpowers",
@@ -90,20 +90,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/skill-creator/SKILL.md",
-      "skillFolderHash": "98a510d1cfef9f82c3b1eec200229ca68725e613",
-      "pluginName": "example-skills",
+      "skillFolderHash": "3cf9a8db32597ba3e24b584a3d696f4e11c7d7b6",
       "installedAt": "2026-04-20T00:02:56.851Z",
-      "updatedAt": "2026-04-20T00:02:56.851Z"
+      "updatedAt": "2026-05-11T18:34:13.784Z"
     },
     "mcp-builder": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/mcp-builder/SKILL.md",
-      "skillFolderHash": "9173e2c2107aac82d4ca6c726d71e89d11760470",
-      "pluginName": "example-skills",
+      "skillFolderHash": "b866bcfb57b780c10b587c7b543e871a91661ce0",
       "installedAt": "2026-04-20T00:03:00.021Z",
-      "updatedAt": "2026-04-20T00:03:00.021Z"
+      "updatedAt": "2026-05-11T18:34:15.963Z"
     },
     "gh-cli": {
       "source": "github/awesome-copilot",
@@ -119,9 +117,27 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/lfarci/flouz.git",
       "skillPath": "skills/flouz/SKILL.md",
-      "skillFolderHash": "fe8d4ec82540141a3ec00ee7da6fa7d4f58a393f",
+      "skillFolderHash": "14e5e1c01e52da35209a4a85000f1464301e1c98",
       "installedAt": "2026-05-02T18:57:54.852Z",
-      "updatedAt": "2026-05-02T19:00:52.127Z"
+      "updatedAt": "2026-05-11T18:34:18.427Z"
+    },
+    "accessibility-a11y": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mindrally/skills.git",
+      "skillPath": "accessibility-a11y/SKILL.md",
+      "skillFolderHash": "b9789ab533140a37cacdb099aaa4503168d8ceff",
+      "installedAt": "2026-05-11T18:36:19.135Z",
+      "updatedAt": "2026-05-11T18:36:19.135Z"
+    },
+    "frontend-accessibility-best-practices": {
+      "source": "sergiodxa/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/sergiodxa/agent-skills.git",
+      "skillPath": "skills/frontend-accessibility-best-practices/SKILL.md",
+      "skillFolderHash": "c88c01e75154e3286120585703f9e8f94f50e9a3",
+      "installedAt": "2026-05-11T18:37:10.017Z",
+      "updatedAt": "2026-05-11T18:37:10.017Z"
     }
   },
   "dismissed": {
