@@ -72,7 +72,8 @@
     }
   },
   "azureTerraform.survey": {
-    "surveyPromptDate": "2026-05-21T11:58:46.740Z",
-    "surveyPromptIgnoredCount": 0
-  }
+    "surveyPromptDate": "2026-05-29T10:11:28.713Z",
+    "surveyPromptIgnoredCount": 1
+  },
+  "diffEditor.ignoreTrimWhitespace": false
 }
