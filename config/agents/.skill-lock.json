@@ -138,6 +138,43 @@
       "skillFolderHash": "c88c01e75154e3286120585703f9e8f94f50e9a3",
       "installedAt": "2026-05-11T18:37:10.017Z",
       "updatedAt": "2026-05-11T18:37:10.017Z"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "skillFolderHash": "75e1acaafe8b08e59d4b86fc253ac7873aff6bba",
+      "pluginName": "ui-ux-pro-max",
+      "installedAt": "2026-05-19T11:33:49.547Z",
+      "updatedAt": "2026-05-19T11:33:49.547Z"
+    },
+    "mermaid-diagrams": {
+      "source": "softaworks/agent-toolkit",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/softaworks/agent-toolkit.git",
+      "skillPath": "skills/mermaid-diagrams/SKILL.md",
+      "skillFolderHash": "1b7a962715838d762fe4b34701d797d1d57496cd",
+      "installedAt": "2026-05-19T11:35:31.001Z",
+      "updatedAt": "2026-05-19T11:35:31.001Z"
+    },
+    "create-implementation-plan": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/github/awesome-copilot.git",
+      "skillPath": "skills/create-implementation-plan/SKILL.md",
+      "skillFolderHash": "dbd2ff5df455bcc96aaf084cf2f86c208062d06b",
+      "installedAt": "2026-05-19T12:34:47.924Z",
+      "updatedAt": "2026-05-19T12:34:47.924Z"
+    },
+    "github-actions-docs": {
+      "source": "xixu-me/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/xixu-me/skills.git",
+      "skillPath": "skills/github-actions-docs/SKILL.md",
+      "skillFolderHash": "518c85da555f91c346813aa5bb3cc62f9db8bfb3",
+      "installedAt": "2026-05-20T13:50:36.555Z",
+      "updatedAt": "2026-05-20T13:50:36.555Z"
     }
   },
   "dismissed": {
