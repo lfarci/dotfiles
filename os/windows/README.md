@@ -24,6 +24,11 @@ pwsh -ExecutionPolicy Bypass -File .\bootstrap.ps1
 
 Restart your terminal when done.
 
+The bootstrap refreshes its process `PATH` after winget finishes and then
+installs the extensions declared in `config\vscode\extensions.txt`. If VS Code
+was installed but `code` is still unavailable, reopen PowerShell and rerun the
+bootstrap.
+
 ### What gets installed (via winget)
 
 | Package | winget ID |
@@ -41,6 +46,7 @@ Restart your terminal when done.
 
 - **JetBrainsMono Nerd Font** installed (user-level, no admin needed)
 - **Oh My Posh** added to both PowerShell 5.1 and PowerShell 7 profiles
+- **VS Code extensions** installed from `config\vscode\extensions.txt`
 - Config files symlinked:
 
 | Source | Destination |
@@ -75,9 +81,15 @@ cd ~/dotfiles
 
 See the [WSL docs](https://learn.microsoft.com/en-us/windows/wsl/install) for installing WSL.
 
+The WSL phase uses the Windows `code` CLI exposed inside WSL. Extensions that
+affect the VS Code interface, including color and icon themes, are installed on
+the Windows side. The PowerShell phase links the tracked settings into
+`%APPDATA%\Code\User`, so run the Windows phase before the WSL phase. If `code`
+is unavailable inside WSL, reopen the terminal after installing VS Code and
+rerun `bootstrap.sh`.
+
 ## Notes
 
 - Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
 - The `bootstrap.ps1` backs up any pre-existing config files to `~/.dotfiles_backup_<timestamp>/`.
 - Windows Terminal changes should be made in `config/windows-terminal/settings.json` so they stay in the repo.
-
