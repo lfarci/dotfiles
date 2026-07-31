@@ -108,17 +108,6 @@ detect_os() {
   echo "unknown"
 }
 
-OS="${DOTFILES_OS:-$(detect_os)}"
-log "Detected OS: $OS"
-
-OS_SCRIPT="$DOTFILES_DIR/os/$OS/install.sh"
-if [[ -f "$OS_SCRIPT" ]]; then
-  # shellcheck source=/dev/null
-  source "$OS_SCRIPT"
-else
-  warn "No OS script found for '$OS'; skipping package install"
-fi
-
 install_skills() {
   if ! command -v npx >/dev/null 2>&1; then
     warn "npx not found; skipping skills restore"
@@ -170,7 +159,74 @@ install_nvm_node() {
   fi
 }
 
-install_oh_my_posh
-link_all
-install_nvm_node
-install_skills
+install_vscode_extensions() {
+  local extensions_file="$DOTFILES_DIR/config/vscode/extensions.txt"
+  if [[ ! -f "$extensions_file" ]]; then
+    warn "VS Code extension list not found: $extensions_file"
+    return 1
+  fi
+
+  if ! command -v code >/dev/null 2>&1; then
+    if [[ "${OS:-$(detect_os)}" == "windows" ]]; then
+      warn "VS Code CLI 'code' not found on PATH"
+      warn "Install VS Code on Windows, reopen the terminal, and rerun bootstrap"
+      return 1
+    fi
+
+    warn "VS Code CLI 'code' not found; skipping extension install"
+    return
+  fi
+
+  local extensions=()
+  local line trimmed
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%%#*}"
+    trimmed="${line#"${line%%[![:space:]]*}"}"
+    trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
+    [[ -n "$trimmed" ]] && extensions+=("$trimmed")
+  done < "$extensions_file"
+
+  if [[ "${#extensions[@]}" -eq 0 ]]; then
+    warn "No VS Code extensions listed in $extensions_file"
+    return
+  fi
+
+  local failed=()
+  local extension
+  log "Installing VS Code extensions..."
+  for extension in "${extensions[@]}"; do
+    log "  $extension"
+    if ! code --install-extension "$extension" --force; then
+      warn "  failed to install $extension"
+      failed+=("$extension")
+    fi
+  done
+
+  if [[ "${#failed[@]}" -gt 0 ]]; then
+    warn "Failed to install VS Code extensions: ${failed[*]}"
+    return 1
+  fi
+}
+
+main() {
+  OS="${DOTFILES_OS:-$(detect_os)}"
+  log "Detected OS: $OS"
+
+  local os_script="$DOTFILES_DIR/os/$OS/install.sh"
+  if [[ -f "$os_script" ]]; then
+    # shellcheck source=/dev/null
+    source "$os_script"
+  else
+    warn "No OS script found for '$OS'; skipping package install"
+  fi
+
+  install_oh_my_posh
+  link_all
+  install_nvm_node
+  install_vscode_extensions
+  install_skills
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  main "$@"
+fi

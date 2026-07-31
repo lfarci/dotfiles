@@ -28,13 +28,6 @@ function Test-CanSymlink {
     }
 }
 
-if (-not (Test-CanSymlink)) {
-    Warn "Cannot create symbolic links."
-    Warn "Either enable Developer Mode (Settings > System > For developers)"
-    Warn "or re-run this script as Administrator."
-    exit 1
-}
-
 # ── PATH refresh ────────────────────────────────────────────────────────────
 
 function Update-EnvPath {
@@ -205,6 +198,46 @@ function Restore-Skills {
     }
 }
 
+# ── VS Code extensions ──────────────────────────────────────────────────────
+
+function Install-VSCodeExtensions {
+    $extensionsFile = Join-Path $DotfilesDir 'config\vscode\extensions.txt'
+    if (-not (Test-Path $extensionsFile)) {
+        throw "VS Code extension list not found: $extensionsFile"
+    }
+
+    $codeCommand = Get-Command code -CommandType Application -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if (-not $codeCommand) {
+        throw "VS Code CLI 'code' not found on PATH. Install VS Code, reopen the terminal, and rerun bootstrap."
+    }
+
+    $extensions = Get-Content $extensionsFile |
+        ForEach-Object { ($_ -replace '#.*$', '').Trim() } |
+        Where-Object   { $_ -ne '' }
+
+    if (-not $extensions) {
+        Warn "No VS Code extensions listed in $extensionsFile"
+        return
+    }
+
+    $failed = [System.Collections.Generic.List[string]]::new()
+
+    Log "Installing VS Code extensions..."
+    foreach ($extension in $extensions) {
+        Log "  $extension"
+        & $codeCommand.Path --install-extension $extension --force
+        if ($LASTEXITCODE -ne 0) {
+            Warn "  extension install exited $LASTEXITCODE for $extension"
+            $failed.Add($extension)
+        }
+    }
+
+    if ($failed.Count -gt 0) {
+        throw "Failed to install VS Code extensions: $($failed -join ', ')"
+    }
+}
+
 # ── PowerShell profile ──────────────────────────────────────────────────────
 
 function Add-OhMyPoshToProfile {
@@ -250,11 +283,25 @@ function Set-OhMyPoshProfile {
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
-Install-WingetPackages
-Install-NerdFont
-Link-All
-Restore-Skills
-Set-OhMyPoshProfile
+function Invoke-DotfilesBootstrap {
+    if (-not (Test-CanSymlink)) {
+        Warn "Cannot create symbolic links."
+        Warn "Either enable Developer Mode (Settings > System > For developers)"
+        Warn "or re-run this script as Administrator."
+        throw "Symbolic link capability is required."
+    }
 
-Log "Done! Restart your terminal for all changes to take effect."
-Log "Windows Terminal settings are linked from config\\windows-terminal\\settings.json."
+    Install-WingetPackages
+    Install-VSCodeExtensions
+    Install-NerdFont
+    Link-All
+    Restore-Skills
+    Set-OhMyPoshProfile
+
+    Log "Done! Restart your terminal for all changes to take effect."
+    Log "Windows Terminal settings are linked from config\\windows-terminal\\settings.json."
+}
+
+if ($MyInvocation.InvocationName -ne '.') {
+    Invoke-DotfilesBootstrap
+}

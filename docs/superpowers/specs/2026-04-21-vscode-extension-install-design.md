@@ -6,10 +6,13 @@ Install the required VS Code extensions during bootstrap on both Windows and Uni
 
 ## Constraints
 
-- Use the VS Code CLI via `code --install-extension` rather than OS package managers.
+- Use the VS Code CLI via `code --install-extension <id> --force` rather than OS package managers.
 - Keep a single shared extension list for all supported operating systems.
 - Fit the repo's existing pattern of plain text package manifests and top-level bootstrap orchestration.
-- Fail clearly if `code` is not available, because VS Code is already expected to be installed from the package lists.
+- Fail clearly if `code` is not available on Windows or WSL, where the Windows
+  setup installs VS Code.
+- Warn and skip extension installation on native Ubuntu and Fedora when `code`
+  is unavailable, because their package lists do not install VS Code.
 - Leave unrelated working tree changes untouched.
 
 ## Design
@@ -28,6 +31,7 @@ Initial contents:
 
 - `catppuccin.catppuccin-vsc`
 - `catppuccin.catppuccin-vsc-icons`
+- `PKief.material-icon-theme`
 - `ms-dotnettools.csharp`
 - `stackbreak.comment-divider`
 - `github.vscode-github-actions`
@@ -44,15 +48,27 @@ The helper will:
 1. Verify the `code` CLI is available on `PATH`.
 2. Read `config/vscode/extensions.txt`.
 3. Strip comments and blank lines.
-4. Install each listed extension with `code --install-extension <id>`.
+4. Install each listed extension with `code --install-extension <id> --force`.
 5. Continue through the full list even if one install fails.
 6. Fail at the end if any install failed, with a clear message identifying the failing extension IDs.
 
-This keeps bootstrap resilient enough to surface all extension issues in one run while still treating a missing editor CLI or broken extension install as a setup failure.
+This keeps bootstrap resilient enough to surface all extension issues in one
+run. A missing editor CLI is a setup failure on Windows and WSL but a warning
+on native Ubuntu and Fedora.
 
 ### Ordering
 
-Run the VS Code extension install step after package installation and before or after symlink creation. The exact placement is not behaviorally sensitive as long as it runs after package installation, but placing it near the other tool setup steps keeps the flow easier to follow.
+Run the VS Code extension install step after package installation and before
+skills restoration. PowerShell must run it immediately after winget package
+installation refreshes the process `PATH`.
+
+### WSL extension location
+
+The WSL bootstrap uses the Windows `code` CLI. VS Code installs extensions that
+affect the user interface, such as color and icon themes, locally on Windows.
+The Windows PowerShell phase links `config/vscode/settings.json` into
+`%APPDATA%\Code\User`, so it remains responsible for selecting the tracked
+theme.
 
 ### Documentation
 

@@ -4,8 +4,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  bash-vscode-extensions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check Bash syntax
+        run: bash -n bootstrap.sh os/windows/install.sh os/ubuntu/install.sh os/fedora/install.sh
+
+      - name: Test VS Code extension installer
+        run: bash tests/bootstrap-vscode-extensions.bash
+
+  powershell-vscode-extensions:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Test VS Code extension installer
+        shell: powershell
+        run: .\tests\bootstrap-vscode-extensions.Tests.ps1
+
   docker-bootstrap:
     runs-on: ubuntu-latest
+    needs: [bash-vscode-extensions, powershell-vscode-extensions]
     strategy:
       matrix:
         os: [ubuntu, fedora, windows]

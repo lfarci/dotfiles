@@ -1,0 +1,13 @@
+# VS Code extensions installed by bootstrap scripts
+catppuccin.catppuccin-vsc
+catppuccin.catppuccin-vsc-icons
+PKief.material-icon-theme
+
+ms-dotnettools.csharp
+
+stackbreak.comment-divider
+github.vscode-github-actions
+github.vscode-pull-request-github
+
+codezombiech.gitignore
+mermaidchart.vscode-mermaid-chart
