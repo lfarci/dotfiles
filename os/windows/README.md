@@ -58,6 +58,7 @@ bootstrap.
 | `config/vscode/keybindings.json` | `%APPDATA%\Code\User\keybindings.json` |
 | `config/windows-terminal/settings.json` | Windows Terminal `settings.json` |
 | `config/agents` | `~\.agents` |
+| `config/agents/skills` | `~\.copilot\skills` |
 | `config/claude/settings.json` | `~\.claude\settings.json` |
 
 ### Windows Terminal settings

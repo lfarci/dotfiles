@@ -54,6 +54,7 @@ link_all() {
     "config/git/.gitignore_global:.gitignore_global"
     "config/bash/.inputrc:.inputrc"
     "config/agents:.agents"
+    "config/agents/skills:.copilot/skills"
     "config/claude/settings.json:.claude/settings.json"
   )
 
