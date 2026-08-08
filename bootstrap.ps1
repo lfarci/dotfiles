@@ -164,6 +164,7 @@ function Link-All {
         @{ Src = 'config\vscode\keybindings.json';     Dst = "$env:APPDATA\Code\User\keybindings.json" }
         @{ Src = 'config\windows-terminal\settings.json'; Dst = $windowsTerminalSettingsPath }
         @{ Src = 'config\agents';                      Dst = "$HOME\.agents" }
+        @{ Src = 'config\agents\skills';               Dst = "$HOME\.copilot\skills" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
     )
 
