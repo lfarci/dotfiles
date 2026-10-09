@@ -45,7 +45,7 @@ bootstrap.
 ### What gets configured
 
 - **JetBrainsMono Nerd Font** installed (user-level, no admin needed)
-- **Oh My Posh** added to both PowerShell 5.1 and PowerShell 7 profiles
+- **Oh My Posh** added to both PowerShell 5.1 and PowerShell 7 profiles, at their real loaded locations (resolved from the actual Documents folder, so redirected/OneDrive Documents is supported)
 - **VS Code extensions** installed from `config\vscode\extensions.txt`
 - Config files symlinked:
 
