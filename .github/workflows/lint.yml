@@ -54,6 +54,11 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
+          Import-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force
+          $analyzer = Get-Module PSScriptAnalyzer
+          if ($analyzer.Version -ne [version]'1.25.0') {
+            throw "Expected PSScriptAnalyzer 1.25.0, got $($analyzer.Version)."
+          }
 
           $files = @(
             'bootstrap.ps1'
