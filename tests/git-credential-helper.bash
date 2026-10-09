@@ -42,13 +42,15 @@ test_local_include_wins() {
     fail "include is not ordered after the credential section"
 }
 
-# A local override in ~/.gitconfig.local must take precedence over the tracked
-# default helper, so machine-specific authentication keeps working.
+# Exercise credential fill with a local helper that returns a distinct
+# credential. Helpers are chained by Git, so inspect the result and confirm
+# the tracked gh helper was not invoked rather than only checking config order.
 test_local_override_beats_default() {
-  local resolved
+  local output
   cat > "$HOME/.gitconfig.local" <<'EOF'
 [credential "https://github.com"]
-	helper = !echo local-override
+	helper =
+	helper = !printf 'username=local-user\\npassword=local-secret\\n\\n'
 EOF
 
   export GIT_CONFIG_GLOBAL="$GITCONFIG"
@@ -57,11 +59,19 @@ EOF
   unset GIT_CONFIG_KEY_0 GIT_CONFIG_VALUE_0 GIT_CONFIG_KEY_1 GIT_CONFIG_VALUE_1 || true
   unset GIT_CONFIG_KEY_2 GIT_CONFIG_VALUE_2 || true
 
-  resolved="$(git config --get credential.https://github.com.helper)"
-  rm -f "$HOME/.gitconfig.local"
+  local temp_dir="$TMP_ROOT/override"
+  local bin_dir="$temp_dir/bin"
+  mkdir -p "$bin_dir"
+  cp "$TEST_DIR/fixtures/gh-stub.bash" "$bin_dir/gh"
+  chmod +x "$bin_dir/gh"
+  export DOTFILES_GH_LOG="$temp_dir/gh.log"
 
-  [[ "$resolved" == "!echo local-override" ]] ||
-    fail "local ~/.gitconfig.local override did not win (got: $resolved)"
+  output="$(printf 'protocol=https\nhost=github.com\n\n' | PATH="$bin_dir:$PATH" git credential fill)"
+  [[ "$output" == *"username=local-user"* && "$output" == *"password=local-secret"* ]] ||
+    fail "git credential fill did not use the local helper (got: $output)"
+  [[ ! -e "$DOTFILES_GH_LOG" ]] ||
+    fail "tracked gh helper ran despite the local helper override"
+  rm -f "$HOME/.gitconfig.local"
 }
 
 # Resolve the helper through git with a stub gh on PATH and confirm git invokes
