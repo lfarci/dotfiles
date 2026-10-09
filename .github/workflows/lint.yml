@@ -1,0 +1,76 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Both jobs lint an explicit list of maintained scripts. Upstream-vendored skill
+# content under config/agents/ is deliberately never passed to either analyzer.
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # Pin the version so results cannot drift with the runner image. The
+      # release tarball ships shellcheck-v<version>/shellcheck (a binary, plus
+      # its LICENSE), which is copied onto PATH below.
+      - name: Install ShellCheck 0.11.0
+        env:
+          SHELLCHECK_VERSION: 0.11.0
+        run: |
+          curl -fsSL --retry 3 -o shellcheck.tar.xz \
+            "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz"
+          tar -xJf shellcheck.tar.xz
+          sudo install -m 0755 "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/shellcheck
+
+      - name: Check maintained Bash scripts with ShellCheck
+        run: |
+          shellcheck --version
+          shellcheck \
+            --severity=warning \
+            bootstrap.sh \
+            os/ubuntu/install.sh \
+            os/fedora/install.sh \
+            os/windows/install.sh \
+            tests/bootstrap-vscode-extensions.bash \
+            tests/fixtures/code-stub.bash
+
+  psscriptanalyzer:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install PSScriptAnalyzer
+        shell: powershell
+        run: Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force -Scope CurrentUser
+
+      - name: Check maintained PowerShell scripts with PSScriptAnalyzer
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $files = @(
+            'bootstrap.ps1'
+            'tests/bootstrap-vscode-extensions.Tests.ps1'
+          )
+
+          $findings = @()
+          foreach ($file in $files) {
+            $findings += @(Invoke-ScriptAnalyzer -Path $file -Settings ./PSScriptAnalyzerSettings.psd1)
+          }
+
+          if ($findings.Count -gt 0) {
+            $findings |
+              Format-Table -AutoSize RuleName, Severity, ScriptName, Line, Message |
+              Out-String -Width 4096 |
+              Write-Host
+            throw "PSScriptAnalyzer reported $($findings.Count) finding(s)."
+          }
+
+          Write-Host 'PSScriptAnalyzer: no findings.'
