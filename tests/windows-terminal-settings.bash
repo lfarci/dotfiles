@@ -29,6 +29,7 @@ PYTHON="$(find_python)" || fail "a working python interpreter is required to val
 # and no machine-specific WSL profile may be hardcoded.
 "$PYTHON" - "$SETTINGS" <<'PY' || fail "Windows Terminal settings validation failed"
 import json
+import re
 import sys
 
 path = sys.argv[1]
@@ -51,9 +52,42 @@ if font_face != "JetBrainsMono Nerd Font":
         "font settings apply to Command Prompt and dynamically discovered profiles"
     )
 
+def is_wsl_profile(profile):
+    source = profile.get("source", "")
+    commandline = profile.get("commandline", "")
+    return (
+        source.casefold() == "windows.terminal.wsl"
+        or re.search(
+            r"(?<![\w.-])wsl(?:\.exe)?(?=$|[\s\"'])",
+            commandline,
+            re.IGNORECASE,
+        ) is not None
+    )
+
+
+# Exercise both Windows Terminal's generated-profile marker and explicit WSL
+# commands across distro names, while ensuring ordinary built-in profiles pass.
+for profile in [
+    {"name": "Debian", "source": "Windows.Terminal.Wsl"},
+    {"name": "Fedora", "commandline": "wsl.exe -d Fedora"},
+    {"name": "openSUSE", "commandline": r"C:\Windows\System32\wsl.exe -d openSUSE"},
+]:
+    if not is_wsl_profile(profile):
+        raise SystemExit(f"failed to recognize WSL profile: {profile!r}")
+
+for profile in [
+    {
+        "name": "Windows PowerShell",
+        "commandline": r"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe",
+    },
+    {"name": "Command Prompt", "commandline": "cmd.exe"},
+]:
+    if is_wsl_profile(profile):
+        raise SystemExit(f"incorrectly recognized built-in profile as WSL: {profile!r}")
+
 for profile in profiles["list"]:
     name = profile.get("name", "")
-    if name.lower().startswith("ubuntu"):
+    if is_wsl_profile(profile):
         raise SystemExit(
             f"machine-specific WSL profile '{name}' must not be hardcoded"
         )
