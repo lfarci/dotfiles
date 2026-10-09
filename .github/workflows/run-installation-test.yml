@@ -20,7 +20,7 @@ on:
 
 # Cancel superseded runs for the same ref to keep fast feedback cheap.
 concurrency:
-  group: bootstrap-checks-${{ github.workflow }}-${{ github.ref }}
+  group: bootstrap-checks-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
