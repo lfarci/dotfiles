@@ -16,10 +16,10 @@ jobs:
       - name: Test VS Code extension installer
         run: bash tests/bootstrap-vscode-extensions.bash
 
-            - name: Test Docker service activation
-              run: bash tests/docker-service-activation.bash
+      - name: Test Docker service activation
+        run: bash tests/docker-service-activation.bash
 
-        powershell-vscode-extensions:
+  powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
