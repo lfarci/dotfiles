@@ -32,6 +32,19 @@ Restart your terminal for all changes to take effect.
 | `config/vscode/settings.json` | `~/.config/Code/User/settings.json` |
 | `config/vscode/keybindings.json` | `~/.config/Code/User/keybindings.json` |
 
+## Updating
+
+```bash
+cd ~/dotfiles
+git pull --ff-only
+./bootstrap.sh
+```
+
+`bootstrap.sh` is idempotent — re-running it is safe. Config files are symlinked,
+so edits to `config/` (including a `git pull` that changes them) apply
+immediately; re-run the bootstrap only when symlink mappings, packages,
+extensions, or skills change.
+
 ## Notes
 
 - Run `source ~/.bashrc` or restart the terminal after the first install.

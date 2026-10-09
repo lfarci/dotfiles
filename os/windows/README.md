@@ -89,6 +89,20 @@ the Windows side. The PowerShell phase links the tracked settings into
 is unavailable inside WSL, reopen the terminal after installing VS Code and
 rerun `bootstrap.sh`.
 
+## Updating
+
+```powershell
+cd $HOME\dotfiles
+git pull --ff-only
+pwsh -ExecutionPolicy Bypass -File .\bootstrap.ps1
+```
+
+Then repeat `git pull` + `./bootstrap.sh` inside WSL for the Linux side.
+Both bootstraps are idempotent — re-running is safe. Config files are
+symlinked, so edits to `config/` (including a `git pull` that changes them)
+apply immediately; re-run a bootstrap only when symlink mappings, packages,
+extensions, or skills change.
+
 ## Notes
 
 - Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
