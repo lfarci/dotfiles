@@ -147,6 +147,26 @@ https://packages.microsoft.com/repos/azure-cli/ $(. /etc/os-release && echo "$VE
   fi
 }
 
+systemd_is_running() {
+  [[ -d /run/systemd/system ]]
+}
+
+activate_docker_service() {
+  local -a sudo_cmd=("$@")
+
+  if ! systemd_is_running; then
+    warn "systemd is not running; Docker service activation deferred."
+    warn "Start it manually once an init system is available:"
+    warn "  sudo systemctl enable --now docker"
+    warn "On WSL, enable systemd in /etc/wsl.conf ([boot] systemd=true) and restart WSL."
+    return
+  fi
+
+  if ! "${sudo_cmd[@]}" systemctl enable --now docker; then
+    warn "Failed to enable and start the Docker service; run 'sudo systemctl enable --now docker' manually"
+  fi
+}
+
 install_docker() {
   if command -v docker >/dev/null 2>&1; then
     log "docker already installed"
@@ -177,7 +197,7 @@ https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_C
   if "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get update && \
      "${sudo_cmd[@]}" env SYSTEMD_OFFLINE=1 apt-get install -y \
        docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
-    "${sudo_cmd[@]}" systemctl enable --now docker
+    activate_docker_service "${sudo_cmd[@]}"
     "${sudo_cmd[@]}" usermod -aG docker "$USER" && log "Added $USER to docker group"
     log "Installed Docker"
   else
