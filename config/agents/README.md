@@ -9,7 +9,10 @@ Universal skills store managed by the [skills CLI](https://skills.sh).
 Skills are **vendored**: the skill content and its lock file are committed to
 this repository rather than installed from the network on demand. This is the
 current approach and it is intentional — do not remove vendored skills to reduce
-the tracked file count, and do not convert them to an install-on-bootstrap step.
+the tracked file count, and do not replace the committed content with a dynamic
+install-on-bootstrap conversion. Bootstrap's `experimental_install` restores
+the skills from the committed lock file and vendored content; it does not convert
+the repository to fetching skill content dynamically during bootstrap.
 
 Why vendored:
 
@@ -40,10 +43,11 @@ upstream folder at that revision reproduces the recorded value. Recorded hashes
 keep resolving upstream even after the source repository moves forward, which is
 what makes the pinned revision usable as a review baseline.
 
-The skills CLI also stamps provenance into each vendored `SKILL.md` as
-frontmatter (`metadata.github-repo`, `github-path`, `github-ref`,
-`github-tree-sha`). `github-tree-sha` matches the lock entry's
-`skillFolderHash`.
+Some vendored `SKILL.md` files include CLI provenance in frontmatter
+(`metadata.github-repo`, `github-path`, `github-ref`, `github-tree-sha`); this is
+not present in every vendored file. Where present, `github-tree-sha` matches the
+lock entry's `skillFolderHash`. The lock file remains the source of truth for
+provenance across all skills.
 
 ### Upstream-managed content vs. local modifications
 
@@ -80,8 +84,9 @@ npx skills update
 
 The lock file and the content move together. Always commit `skills/` and
 `.skill-lock.json` in the same commit — the lock file is what restores skills on
-a fresh machine (`npx skills experimental_install`), and committing content
-without its lock change means the skill will not be restored.
+a fresh machine (`npx skills experimental_install`) from the committed lock and
+vendored content. Committing content without its lock change means the skill
+will not be restored.
 
 After any update, confirm the lock file and the vendored directories still agree.
 This check needs nothing beyond Node, which the skills CLI already requires:
