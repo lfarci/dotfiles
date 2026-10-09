@@ -48,3 +48,7 @@ git commit -m "Add <skill> skill"
 
 Committing `config/agents/skills/` without the matching `.skill-lock.json`
 change means the skill will not be restored on a fresh machine.
+
+Skills are vendored on purpose, and skill refreshes are reviewed separately from
+bootstrap changes. See [`config/agents/README.md`](config/agents/README.md) for
+the provenance and maintenance policy.
