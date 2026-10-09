@@ -31,7 +31,7 @@
     ],
     "copyFormatting": "none",
     "copyOnSelect": false,
-    "defaultProfile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+    "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
     "keybindings": 
     [
         {
@@ -59,15 +59,17 @@
     ],
     "profiles": 
     {
-        "defaults": {},
+        "defaults": 
+        {
+            "font": 
+            {
+                "face": "JetBrainsMono Nerd Font"
+            }
+        },
         "list": 
         [
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                "font": 
-                {
-                    "face": "JetBrainsMono Nerd Font"
-                },
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "hidden": false,
                 "name": "Windows PowerShell"
@@ -76,16 +78,6 @@
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt"
-            },
-            {
-                "font": 
-                {
-                    "face": "JetBrainsMono Nerd Font"
-                },
-                "guid": "{adb170ec-f26b-5bd1-8b2b-898d0a8b764e}",
-                "hidden": false,
-                "name": "Ubuntu-26.04",
-                "source": "Microsoft.WSL"
             }
         ]
     },
