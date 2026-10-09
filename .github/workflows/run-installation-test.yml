@@ -16,6 +16,9 @@ jobs:
       - name: Test VS Code extension installer
         run: bash tests/bootstrap-vscode-extensions.bash
 
+      - name: Check skills inventory consistency
+        run: bash tests/skills-inventory-consistency.bash
+
   powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
@@ -25,6 +28,10 @@ jobs:
       - name: Test VS Code extension installer
         shell: powershell
         run: .\tests\bootstrap-vscode-extensions.Tests.ps1
+
+      - name: Check skills inventory consistency
+        shell: powershell
+        run: .\tests\skills-inventory-consistency.Tests.ps1
 
   docker-bootstrap:
     runs-on: ubuntu-latest

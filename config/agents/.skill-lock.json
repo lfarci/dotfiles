@@ -38,15 +38,6 @@
       "installedAt": "2026-04-20T00:02:16.365Z",
       "updatedAt": "2026-05-11T18:34:11.118Z"
     },
-    "brainstorming": {
-      "source": "obra/superpowers",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/obra/superpowers.git",
-      "skillPath": "skills/brainstorming/SKILL.md",
-      "skillFolderHash": "f260c775073816860fef8a37c032ac77e2ff5821",
-      "installedAt": "2026-04-20T00:02:19.008Z",
-      "updatedAt": "2026-04-20T00:02:19.008Z"
-    },
     "polish": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
@@ -184,6 +175,16 @@
       "skillFolderHash": "00f804e39e7df79a7f64c99b30caa708b7d37ff3",
       "installedAt": "2026-08-08T08:34:36Z",
       "updatedAt": "2026-08-08T08:34:36Z"
+    },
+    "xlsx": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/xlsx/SKILL.md",
+      "skillFolderHash": "f329f4f6bc54845076a0c7f1fdb9e3848f43df35",
+      "pluginName": "document-skills",
+      "installedAt": "2026-05-07T17:47:48Z",
+      "updatedAt": "2026-05-07T17:47:48Z"
     }
   },
   "dismissed": {
