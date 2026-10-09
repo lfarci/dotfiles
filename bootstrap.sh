@@ -5,7 +5,7 @@ log()  { printf "[dotfiles] %s\n" "$*"; }
 warn() { printf "[dotfiles][warn] %s\n" "$*" >&2; }
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)"
+BACKUP_DIR=""
 
 if [[ "${EUID:-$(id -u)}" -eq 0 && "${DOTFILES_ALLOW_ROOT:-0}" != "1" ]]; then
   warn "Do not run as root; this script links into \$HOME and installs user tools."
@@ -13,13 +13,49 @@ if [[ "${EUID:-$(id -u)}" -eq 0 && "${DOTFILES_ALLOW_ROOT:-0}" != "1" ]]; then
   exit 1
 fi
 
+ensure_backup_dir() {
+  if [[ -n "$BACKUP_DIR" ]]; then
+    return 0
+  fi
+
+  local base candidate suffix
+  base="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)"
+  candidate="$base"
+  suffix=0
+  # mkdir itself reserves the name atomically. Never separate an existence
+  # check from creation: concurrent bootstrap runs could otherwise choose the
+  # same directory and mix their backups.
+  while ! mkdir "$candidate" 2>/dev/null; do
+    [[ -e "$candidate" ]] || return 1
+    suffix=$((suffix + 1))
+    candidate="$base.$suffix"
+  done
+
+  BACKUP_DIR="$candidate"
+}
+
+# Mirror the destination's path structure inside BACKUP_DIR so that
+# destinations sharing a basename (e.g. two settings.json files) cannot
+# overwrite each other's backup.
+backup_path_for() {
+  local dst="$1" relative
+
+  if [[ "$dst" == "$HOME"/* ]]; then
+    relative="${dst#"$HOME"/}"
+  else
+    relative="${dst#/}"
+  fi
+
+  printf '%s\n' "$BACKUP_DIR/$relative"
+}
+
 backup_and_link() {
   local src="$DOTFILES_DIR/$1"
   local dst="$HOME/$2"
 
   if [[ ! -e "$src" ]]; then
     warn "Source missing: $src"
-    return
+    return 0
   fi
 
   mkdir -p "$(dirname "$dst")"
@@ -30,40 +66,70 @@ backup_and_link() {
       current="$(readlink -f "$dst" 2>/dev/null || true)"
       target="$(readlink -f "$src" 2>/dev/null || true)"
       if [[ -n "$current" && -n "$target" && "$current" == "$target" ]]; then
-        return
+        return 0
       fi
     fi
-    mkdir -p "$BACKUP_DIR"
-    mv "$dst" "$BACKUP_DIR/" 2>/dev/null || rm -rf "$dst"
-    log "Backed up $dst to $BACKUP_DIR"
+
+    if ! ensure_backup_dir; then
+      warn "Could not create backup directory for $dst; leaving it untouched and skipping link"
+      return 1
+    fi
+
+    local backup_dst
+    backup_dst="$(backup_path_for "$dst")"
+
+    if ! mkdir -p "$(dirname "$backup_dst")"; then
+      warn "Could not create backup directory for $dst; leaving it untouched and skipping link"
+      return 1
+    fi
+
+    # Never delete the destination as a fallback: if it cannot be moved it is
+    # left exactly as it was, and the link is not created.
+    if ! mv "$dst" "$backup_dst"; then
+      warn "Failed to back up $dst; leaving it untouched and skipping link"
+      return 1
+    fi
+
+    log "Backed up $dst to $backup_dst"
   fi
 
   ln -sfn "$src" "$dst"
   log "Linked $dst -> $src"
 }
 
-link_all() {
-  local mappings=(
-    "config/bash/.bashrc:.bashrc"
-    "config/bash/.bash_aliases:.bash_aliases"
-    "config/git/.gitconfig:.gitconfig"
-    "config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json"
-    "config/ghostty/config.ghostty:.config/ghostty/config.ghostty"
-    "config/vscode/settings.json:.config/Code/User/settings.json"
-    "config/vscode/keybindings.json:.config/Code/User/keybindings.json"
-    "config/git/.gitignore_global:.gitignore_global"
-    "config/bash/.inputrc:.inputrc"
-    "config/agents:.agents"
-    "config/agents/skills:.copilot/skills"
-    "config/claude/settings.json:.claude/settings.json"
-  )
+# Link each "source:destination" mapping, continuing past individual failures so
+# one un-backupable destination cannot stop the remaining links.
+link_mappings() {
+  local failed=0 entry src dst
 
-  local entry src dst
-  for entry in "${mappings[@]}"; do
+  for entry in "$@"; do
     src="${entry%%:*}"
     dst="${entry#*:}"
-    backup_and_link "$src" "$dst"
+    if ! backup_and_link "$src" "$dst"; then
+      failed=1
+    fi
   done
+
+  if [[ "$failed" -ne 0 ]]; then
+    warn "One or more configs could not be linked; existing files were left untouched"
+    return 1
+  fi
+}
+
+link_all() {
+  link_mappings \
+    "config/bash/.bashrc:.bashrc" \
+    "config/bash/.bash_aliases:.bash_aliases" \
+    "config/git/.gitconfig:.gitconfig" \
+    "config/ohmyposh/theme.omp.json:.config/ohmyposh/theme.omp.json" \
+    "config/ghostty/config.ghostty:.config/ghostty/config.ghostty" \
+    "config/vscode/settings.json:.config/Code/User/settings.json" \
+    "config/vscode/keybindings.json:.config/Code/User/keybindings.json" \
+    "config/git/.gitignore_global:.gitignore_global" \
+    "config/bash/.inputrc:.inputrc" \
+    "config/agents:.agents" \
+    "config/agents/skills:.copilot/skills" \
+    "config/claude/settings.json:.claude/settings.json"
 }
 
 install_oh_my_posh() {
