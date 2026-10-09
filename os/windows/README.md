@@ -151,5 +151,12 @@ extensions, or skills change.
 ## Notes
 
 - Git identity overrides (work vs personal) go in `~/.gitconfig.local`, which is included automatically.
+- Git authentication overrides go there too. The tracked config uses `gh` (resolved from `PATH`) as the
+  credential helper for GitHub; a machine that needs a different helper overrides it locally:
+  ```gitconfig
+  [credential "https://github.com"]
+    helper =
+    helper = manager
+  ```
 - The `bootstrap.ps1` backs up any pre-existing config files to `~/.dotfiles_backup_<timestamp>/`.
 - Windows Terminal changes should be made in `config/windows-terminal/settings.json` so they stay in the repo.

@@ -16,11 +16,13 @@
   rb = rebase
   undo = reset --soft HEAD~1
 
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+# Included last so machine-specific identity and authentication settings win.
 [include]
   path = ~/.gitconfig.local
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential

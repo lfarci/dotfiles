@@ -16,6 +16,9 @@ jobs:
       - name: Test VS Code extension installer
         run: bash tests/bootstrap-vscode-extensions.bash
 
+      - name: Test git credential helper config
+        run: bash tests/git-credential-helper.bash
+
   powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
