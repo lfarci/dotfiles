@@ -1,0 +1,7 @@
+# Local backups (bootstrap and manual edits)
+*.bak
+*.bak.*
+
+# Python bytecode from skill scripts
+__pycache__/
+*.py[cod]

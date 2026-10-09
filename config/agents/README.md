@@ -10,6 +10,10 @@ Universal skills store managed by the [skills CLI](https://skills.sh).
 npx skills add <source> --skill <name> --yes --global
 ```
 
+Always commit `skills/` and `.skill-lock.json` together — the lock file is what
+restores skills on a fresh machine (`npx skills experimental_install`). Use
+`npx skills update` to refresh installed skills so the lock stays current.
+
 ## Files
 
 - `skills/` — installed skill packages
