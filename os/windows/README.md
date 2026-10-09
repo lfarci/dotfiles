@@ -7,14 +7,42 @@ Two phases: first bootstrap the native Windows environment with `bootstrap.ps1`,
 ### Prerequisites
 
 - Windows 10 (build 1903+) or Windows 11
+- **Git** — required to clone this repository. `bootstrap.ps1` installs Git via
+  winget, but that happens *after* the clone, so install Git first:
+
+  ```powershell
+  winget install --id Git.Git --exact --accept-source-agreements --accept-package-agreements
+  ```
+
+  (Alternatively, download the repository as a ZIP and extract it.)
 - **winget** — ships with [App Installer](https://apps.microsoft.com/detail/9nblggh4nns1) (pre-installed on Windows 11)
+- **PowerShell** — either **Windows PowerShell 5.1** (built into Windows) or
+  **PowerShell 7+**. `bootstrap.ps1` requires PowerShell 5.1 or later.
+  PowerShell 7 is *not* installed by the bootstrap; install it yourself if you
+  want to use it:
+
+  ```powershell
+  winget install --id Microsoft.PowerShell --exact --accept-source-agreements --accept-package-agreements
+  ```
 - **Symbolic link capability** — either:
   - Enable Developer Mode: **Settings → System → For developers → Developer Mode**
   - Or run PowerShell as Administrator
 
 ### Install
 
-Open **PowerShell 7 (`pwsh`)** (recommended) or Windows PowerShell 5.1 and run:
+Clone the repository, then run the bootstrap with the invocation that matches
+your PowerShell edition. The `-ExecutionPolicy Bypass` flag runs the script even
+when your execution policy would otherwise block it.
+
+**Windows PowerShell 5.1** (built into Windows — no extra install needed):
+
+```powershell
+git clone https://github.com/lfarci/dotfiles.git $HOME\dotfiles
+cd $HOME\dotfiles
+powershell -ExecutionPolicy Bypass -File .\bootstrap.ps1
+```
+
+**PowerShell 7+ (`pwsh`)** — only if you installed PowerShell 7 as described above:
 
 ```powershell
 git clone https://github.com/lfarci/dotfiles.git $HOME\dotfiles
@@ -31,14 +59,19 @@ bootstrap.
 
 ### What gets installed (via winget)
 
+The authoritative list is `packages/winget.txt`; the table mirrors it.
+
 | Package | winget ID |
 |---------|-----------|
 | Git | `Git.Git` |
+| GitHub CLI | `GitHub.cli` |
 | Visual Studio Code | `Microsoft.VisualStudioCode` |
 | Windows Terminal | `Microsoft.WindowsTerminal` |
+| Azure CLI | `Microsoft.AzureCLI` |
 | Node.js LTS | `OpenJS.NodeJS.LTS` |
 | Oh My Posh | `JanDeDobbeleer.OhMyPosh` |
 | ripgrep | `BurntSushi.ripgrep.MSVC` |
+| Terraform | `Hashicorp.Terraform` |
 | fzf | `junegunn.fzf` |
 | eza | `eza-community.eza` |
 
@@ -90,6 +123,18 @@ is unavailable inside WSL, reopen the terminal after installing VS Code and
 rerun `bootstrap.sh`.
 
 ## Updating
+
+Use the same invocation as installation, matching your PowerShell edition.
+
+**Windows PowerShell 5.1:**
+
+```powershell
+cd $HOME\dotfiles
+git pull --ff-only
+powershell -ExecutionPolicy Bypass -File .\bootstrap.ps1
+```
+
+**PowerShell 7+ (`pwsh`):**
 
 ```powershell
 cd $HOME\dotfiles
