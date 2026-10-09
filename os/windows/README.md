@@ -65,7 +65,13 @@ bootstrap.
 
 `bootstrap.ps1` now links the repo-managed Windows Terminal settings file into the active Windows Terminal settings location. It checks the stable Store path first, then Preview, then the unpackaged path under `%LOCALAPPDATA%`.
 
-The tracked file already keeps `JetBrainsMono Nerd Font` configured for the current profiles.
+The tracked file installs `JetBrainsMono Nerd Font` through `profiles.defaults`,
+so the font applies to every profile, including Command Prompt and WSL distros
+that Windows Terminal discovers dynamically.
+
+The default profile is Windows PowerShell, whose base GUID ships with a fresh
+Windows install. No particular WSL distribution is assumed or hardcoded; install
+a distro and let Windows Terminal discover it automatically.
 
 ---
 
