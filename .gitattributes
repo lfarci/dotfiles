@@ -1,0 +1,25 @@
+# Normalize text files to LF inside the repository.
+* text=auto
+
+# Scripts that run on Linux, WSL, and CI. `text eol=lf` normalizes on commit and
+# checks out with LF, so a Windows checkout with core.autocrlf=true cannot inject
+# CRLF into a script that Linux is expected to execute.
+*.sh   text eol=lf
+*.bash text eol=lf
+*.ps1  text eol=lf
+
+# Bash startup files are sourced by Linux/WSL shells, so they need LF too. They
+# carry no `.sh`/`.bash` extension, hence the explicit paths.
+config/bash/.bashrc       text eol=lf
+config/bash/.bash_aliases text eol=lf
+
+# ShellCheck reads `.shellcheckrc` as shell key=value source. A CRLF copy makes
+# ShellCheck report SC1017 on its own config file and fail the run, so it must
+# stay LF on Windows too.
+.shellcheckrc text eol=lf
+
+# NOTE: config/agents/** (upstream-vendored skill content) is deliberately left
+# to `* text=auto`. Marking it `-text` or `eol=lf` would report every vendored
+# file as modified on a CRLF worktree and rewrite stored blobs whose form is
+# owned upstream. Lint scoping, not Git attributes, keeps that tree out of
+# ShellCheck and PSScriptAnalyzer.

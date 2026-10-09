@@ -89,7 +89,7 @@ test_manifest_parsing() (
 
   export DOTFILES_CODE_LOG="$temp_dir/code.log"
   export DOTFILES_CODE_FAIL_IDS=""
-  DOTFILES_DIR="$temp_dir/repo"
+  export DOTFILES_DIR="$temp_dir/repo"
 
   OS=windows PATH="$temp_dir/bin:$PATH" install_vscode_extensions
 

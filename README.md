@@ -33,6 +33,63 @@ or linked — new symlink mappings, packages, VS Code extensions, or skills.
 Changes to the *contents* of already-linked files take effect as soon as you
 edit or pull them, with no bootstrap needed.
 
+### Linting
+
+CI runs ShellCheck over the maintained Bash scripts and PSScriptAnalyzer over
+the maintained PowerShell scripts (`.github/workflows/lint.yml`). Both analyzers
+read a shared config from the repo root, so a local run matches CI exactly.
+
+ShellCheck (`.shellcheckrc`) covers `bootstrap.sh`, `os/*/install.sh` and the
+Bash tests. `--severity=warning` is passed on the command line because ShellCheck
+does not accept `severity` as a config-file key; the rc file supplies
+`external-sources` and `source-path=SCRIPTDIR:.`, which let the `source`
+directives resolve so no inline suppressions are needed. Run it from the repo
+root:
+
+```bash
+shellcheck --severity=warning \
+  bootstrap.sh os/ubuntu/install.sh os/fedora/install.sh \
+  os/windows/install.sh tests/bootstrap-vscode-extensions.bash \
+  tests/fixtures/code-stub.bash
+```
+
+PSScriptAnalyzer (`PSScriptAnalyzerSettings.psd1`) covers `bootstrap.ps1` and
+the Pester tests. On Windows:
+
+```powershell
+Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force -Scope CurrentUser
+
+foreach ($file in 'bootstrap.ps1', 'tests/bootstrap-vscode-extensions.Tests.ps1') {
+  Invoke-ScriptAnalyzer -Path $file -Settings ./PSScriptAnalyzerSettings.psd1
+}
+```
+
+`Invoke-ScriptAnalyzer` also auto-discovers `PSScriptAnalyzerSettings.psd1` from
+the current directory, so run it from the repo root or pass `-Settings`
+explicitly to be sure which baseline applies.
+
+The scope is the bootstrap and test scripts only. Upstream-vendored skill content
+under `config/agents/` is deliberately excluded from both analyzers — it is not
+locally authored and should not be reformatted here. The five excluded
+PSScriptAnalyzer rules and the two benign ShellCheck note classes are each
+justified inline in the config files.
+
+### Line endings
+
+`.gitattributes` normalizes text to LF in the repository and forces `*.sh`,
+`*.bash`, `*.ps1`, `config/bash/.bashrc` and `config/bash/.bash_aliases` to
+check out with LF even when `core.autocrlf=true`. CRLF in these files breaks
+ShellCheck (`SC1017`) and can make a script fail to run under WSL. If a script was checked out before these rules existed, its worktree copy is
+still CRLF and ShellCheck reports `SC1017` for it. Refresh the affected files
+(deleting forces git to re-checkout using the new attributes):
+
+```powershell
+Remove-Item bootstrap.sh, .shellcheckrc; git checkout -- bootstrap.sh .shellcheckrc
+```
+`config/agents/` is intentionally left to `* text=auto` rather than being
+marked `-text`: those files are owned upstream and marking the tree binary would
+report every vendored file as modified on a CRLF worktree.
+
 ### Skills
 
 Skills are installed straight into the repo: `~/.agents` and `~/.copilot/skills`
