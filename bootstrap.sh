@@ -18,16 +18,18 @@ ensure_backup_dir() {
     return 0
   fi
 
-  local base candidate
+  local base candidate suffix
   base="$HOME/.dotfiles_backup_$(date +%Y%m%d%H%M%S)"
   candidate="$base"
-  while [[ -e "$candidate" ]]; do
-    candidate="$base.$RANDOM"
+  suffix=0
+  # mkdir itself reserves the name atomically. Never separate an existence
+  # check from creation: concurrent bootstrap runs could otherwise choose the
+  # same directory and mix their backups.
+  while ! mkdir "$candidate" 2>/dev/null; do
+    [[ -e "$candidate" ]] || return 1
+    suffix=$((suffix + 1))
+    candidate="$base.$suffix"
   done
-
-  if ! mkdir -p "$candidate"; then
-    return 1
-  fi
 
   BACKUP_DIR="$candidate"
 }

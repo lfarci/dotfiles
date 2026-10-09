@@ -147,6 +147,9 @@ test_backups_do_not_collide_across_runs() (
   first_dir="$BACKUP_DIR"
 
   BACKUP_DIR=""
+  # The first run replaced the destination with a symlink to the source.
+  # Recreate an independent original file for the second run.
+  rm "$home/.config/Code/User/settings.json"
   printf 'run-two\n' > "$home/.config/Code/User/settings.json"
   PATH="$temp_dir/bin:$PATH" DOTFILES_DIR="$repo" HOME="$home" \
     backup_and_link config/vscode/settings.json .config/Code/User/settings.json
@@ -162,6 +165,31 @@ test_backups_do_not_collide_across_runs() (
     fail "the first run's backup was lost"
   [[ "$(cat "$second_dir/.config/Code/User/settings.json")" == "run-two" ]] ||
     fail "the second run's backup overwrote or missed the first"
+)
+
+test_backup_directory_collision_retries_atomically() (
+  local temp_dir repo home expected
+  temp_dir="$(mktemp -d)"
+  trap 'rm -rf "$temp_dir"' EXIT
+
+  repo="$temp_dir/repo"
+  home="$temp_dir/home"
+  make_sources "$repo" "vscode-new" "claude-new"
+  mkdir -p "$home/.config/Code/User" "$home/.dotfiles_backup_20240101000000"
+  printf 'occupied\n' > "$home/.dotfiles_backup_20240101000000/marker"
+  printf 'original\n' > "$home/.config/Code/User/settings.json"
+  install_frozen_date_stub "$temp_dir/bin"
+
+  PATH="$temp_dir/bin:$PATH" DOTFILES_DIR="$repo" HOME="$home" \
+    backup_and_link config/vscode/settings.json .config/Code/User/settings.json
+
+  expected="$home/.dotfiles_backup_20240101000000.1"
+  [[ "$BACKUP_DIR" == "$expected" && -d "$expected" ]] ||
+    fail "backup reservation did not retry with the next collision suffix"
+  [[ "$(cat "$home/.dotfiles_backup_20240101000000/marker")" == "occupied" ]] ||
+    fail "existing backup directory contents were modified"
+  [[ "$(cat "$expected/.config/Code/User/settings.json")" == "original" ]] ||
+    fail "backup was not moved into the atomically reserved directory"
 )
 
 test_existing_correct_symlink_untouched() (
@@ -230,6 +258,7 @@ test_link_mappings_reports_failure_and_continues() (
 test_same_basename_collision
 test_backup_failure_keeps_destination
 test_backups_do_not_collide_across_runs
+test_backup_directory_collision_retries_atomically
 test_existing_correct_symlink_untouched
 test_link_mappings_reports_failure_and_continues
 printf 'PASS: bootstrap-backup.bash\n'
