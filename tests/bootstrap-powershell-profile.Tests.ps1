@@ -98,15 +98,21 @@ function Invoke-IsolatedProfileTest {
     }
 }
 
-# ── Real resolution: the Documents special folder is used verbatim ──────────
+# ── Real resolution: profile paths follow the runtime's Documents outcome ────
 
 $realDocuments = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::MyDocuments)
+$expectedDocuments = Resolve-DocumentsPath -KnownFolderPath $realDocuments
+$actualDocuments = Get-DocumentsPath
 
-Assert-True ((Get-DocumentsPath) -eq $realDocuments) 'Get-DocumentsPath did not return the Documents special folder'
+Assert-True ($actualDocuments -eq $expectedDocuments) 'Get-DocumentsPath did not match the resolved Documents special-folder outcome'
+if (-not $realDocuments) {
+    $fallbackDocuments = Join-Path $HOME 'Documents'
+    Assert-True ($actualDocuments -eq $fallbackDocuments) 'an unresolved runtime Documents folder did not fall back to $HOME\Documents'
+}
 
 foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
-    $expected = Join-Path (Join-Path $realDocuments $edition) 'Microsoft.PowerShell_profile.ps1'
-    Assert-True ((Get-PowerShellProfilePath -Edition $edition) -eq $expected) "Get-PowerShellProfilePath did not resolve the $edition profile under the real Documents folder"
+    $expected = Join-Path (Join-Path $expectedDocuments $edition) 'Microsoft.PowerShell_profile.ps1'
+    Assert-True ((Get-PowerShellProfilePath -Edition $edition) -eq $expected) "Get-PowerShellProfilePath did not resolve the $edition profile under the runtime Documents outcome"
 }
 
 $homeRelativeDocuments = Join-Path $HOME 'Documents'
