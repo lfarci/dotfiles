@@ -86,3 +86,7 @@ try {
 }
 
 Write-Host 'PASS: skills-inventory-consistency.Tests.ps1'
+# Several fixture checks intentionally invoke Node processes that exit non-zero.
+# Clear the final expected status so the GitHub Actions PowerShell runner treats
+# this successful test script as successful too.
+$global:LASTEXITCODE = 0
