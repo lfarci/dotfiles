@@ -166,6 +166,9 @@ seed_if_missing() {
 seed_all() {
   local failed=0 entry spec src dst
 
+  # The list intentionally starts with a single entry and grows as more seed
+  # files appear; the loop shape keeps seeding uniform with link_mappings.
+  # shellcheck disable=SC2043
   for entry in \
     "seed:config/opencode/cli.json:.config/opencode/cli.json"; do
     spec="${entry#seed:}"
