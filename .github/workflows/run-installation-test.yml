@@ -34,10 +34,14 @@ jobs:
       - name: Test skills restore staging
         run: bash tests/bootstrap-skills-restore.bash
 
+      - name: Test backup and link behavior
+        run: bash tests/bootstrap-backup.bash
+
       - name: Check skills inventory consistency
         run: bash tests/skills-inventory-consistency.bash
 
   powershell-tests:
+  powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
