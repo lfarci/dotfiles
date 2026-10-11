@@ -1,7 +1,27 @@
-name: Manual Docker bootstrap
+name: Bootstrap checks
 
+# Fast checks (Bash syntax + Bash/PowerShell extension tests) run automatically
+# for pull requests and pushes to main. The expensive, network-dependent Docker
+# installation jobs are opt-in: they run on the weekly schedule or when a manual
+# run explicitly requests them. See docs/ci.md for the full execution policy.
 on:
   workflow_dispatch:
+    inputs:
+      run_installation:
+        description: Also run the expensive Docker installation jobs
+        type: boolean
+        default: false
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly safety net for the heavy installation jobs (Mondays 04:00 UTC).
+    - cron: '0 4 * * 1'
+
+# Cancel superseded runs for the same ref to keep fast feedback cheap.
+concurrency:
+  group: bootstrap-checks-${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   bash-vscode-extensions:
@@ -27,8 +47,12 @@ jobs:
         run: .\tests\bootstrap-vscode-extensions.Tests.ps1
 
   docker-bootstrap:
-    runs-on: ubuntu-latest
+    # Expensive: only on the weekly schedule or an explicit manual request.
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_installation)
     needs: [bash-vscode-extensions, powershell-vscode-extensions]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [ubuntu, fedora, windows]
