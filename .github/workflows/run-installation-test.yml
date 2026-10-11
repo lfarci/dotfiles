@@ -28,6 +28,29 @@ jobs:
       - name: Check Bash syntax
         run: bash -n bootstrap.sh os/windows/install.sh os/ubuntu/install.sh os/fedora/install.sh
 
+      - name: Test VS Code extension installer
+        run: bash tests/bootstrap-vscode-extensions.bash
+
+      - name: Test skills restore staging
+        run: bash tests/bootstrap-skills-restore.bash
+
+      - name: Check skills inventory consistency
+        run: bash tests/skills-inventory-consistency.bash
+
+  powershell-tests:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Test VS Code extension installer
+        shell: powershell
+        run: .\tests\bootstrap-vscode-extensions.Tests.ps1
+
+      - name: Check skills inventory consistency
+        shell: powershell
+        run: .\tests\skills-inventory-consistency.Tests.ps1
+
   docker-bootstrap:
     # Expensive: only on the weekly schedule or an explicit manual request.
     if: >-

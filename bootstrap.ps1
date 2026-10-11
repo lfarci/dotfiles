@@ -182,20 +182,37 @@ function Restore-Skills {
         return
     }
 
-    $lockFile = Join-Path $HOME '.agents\.skill-lock.json'
+    $agentsDir = Join-Path $HOME '.agents'
+    $lockFile = Join-Path $agentsDir '.skill-lock.json'
     if (-not (Test-Path $lockFile)) {
         Log "No .skill-lock.json found; skipping skills restore."
         return
     }
 
-    Log "Restoring skills from .skill-lock.json..."
-    Push-Location (Join-Path $HOME '.agents')
+    # `experimental_install` restores from .\skills-lock.json into .\.agents\skills\,
+    # so stage a directory whose .agents points at the tracked store and hand it the
+    # tracked lock verbatim (no hashes are recomputed or invented).
+    $staging = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-skills-$([guid]::NewGuid())"
     try {
-        npx skills experimental_install -y
-        if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
-        else                     { Log  "Skills restored." }
+        New-Item -Path $staging -ItemType Directory -Force | Out-Null
+        New-Item -Path (Join-Path $staging '.agents') -ItemType Junction -Target $agentsDir | Out-Null
+        Copy-Item -Path $lockFile -Destination (Join-Path $staging 'skills-lock.json')
+
+        Log "Restoring skills from .skill-lock.json..."
+        Push-Location $staging
+        try {
+            npx skills experimental_install -y
+            if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
+            else                     { Log  "Skills restored." }
+        } finally {
+            Pop-Location
+        }
+    } catch {
+        Warn "Skills restore failed: $($_.Exception.Message)"
     } finally {
-        Pop-Location
+        if (Test-Path $staging) {
+            Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 

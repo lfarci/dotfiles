@@ -69,7 +69,13 @@ git commit -m "Add <skill> skill"
 ```
 
 Committing `config/agents/skills/` without the matching `.skill-lock.json`
-change means the skill will not be restored on a fresh machine.
+change means the skill will not be restored on a fresh machine. The two
+inventories are checked by name (not just by count) so an orphaned lock entry
+cannot hide behind an unlocked skill directory:
+
+```bash
+node tests/skills-inventory-consistency.mjs
+```
 
 Skills are vendored on purpose, and skill refreshes are reviewed separately from
 bootstrap changes. See [`config/agents/README.md`](config/agents/README.md) for
