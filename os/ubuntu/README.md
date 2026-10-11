@@ -57,3 +57,9 @@ extensions, or skills change.
     helper = store
   ```
 - VS Code is not installed by `packages/apt.txt`; bootstrap warns and skips extensions when `code` is unavailable.
+- Docker is installed from Docker's official repository and the `docker` service is
+  enabled and started only when systemd is running. On hosts without a running
+  systemd (Docker build stages, WSL without systemd, containers) bootstrap reports
+  that activation is deferred and finishes normally; start the service later with
+  `sudo systemctl enable --now docker`, or enable systemd in WSL by adding
+  `[boot]` / `systemd=true` to `/etc/wsl.conf` and running `wsl --shutdown`.
