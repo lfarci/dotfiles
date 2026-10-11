@@ -6,19 +6,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/vercel-labs/skills.git",
       "skillPath": "skills/find-skills/SKILL.md",
-      "skillFolderHash": "3013fdeb8a11b10b1eb795ec3ae8bfca38f7c26d",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
       "installedAt": "2026-04-19T23:26:08.769Z",
-      "updatedAt": "2026-04-19T23:26:08.769Z"
+      "updatedAt": "2026-10-09T19:14:46.534Z"
     },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/frontend-design/SKILL.md",
-      "skillFolderHash": "928950704df8a8b885c03de5da626331e6f29cf8",
-      "pluginName": "example-skills",
+      "skillFolderHash": "d79e2a5bb4df4a386c2adcdd9ab8709bba28c3f6",
       "installedAt": "2026-04-19T23:53:21.984Z",
-      "updatedAt": "2026-05-10T20:26:31.016Z"
+      "updatedAt": "2026-10-09T19:14:49.157Z"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
@@ -34,9 +33,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/obra/superpowers.git",
       "skillPath": "skills/using-git-worktrees/SKILL.md",
-      "skillFolderHash": "13a9643fb9e4b236173f7d4b56b15dac10394f1b",
+      "skillFolderHash": "d2b8357b922667a091bfe967840abf5ae84ce99c",
       "installedAt": "2026-04-20T00:02:16.365Z",
-      "updatedAt": "2026-05-11T18:34:11.118Z"
+      "updatedAt": "2026-10-09T19:14:56.035Z"
     },
     "polish": {
       "source": "pbakaus/impeccable",
@@ -71,10 +70,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/docx/SKILL.md",
-      "skillFolderHash": "a0d216202f9793a78da44cf96aabe48f42e627ac",
-      "pluginName": "document-skills",
+      "skillFolderHash": "6e6f5b95c1de6e803cc07b214f5059b074d64e0c",
       "installedAt": "2026-04-20T00:02:53.210Z",
-      "updatedAt": "2026-04-20T00:02:53.210Z"
+      "updatedAt": "2026-10-09T19:14:53.018Z"
     },
     "skill-creator": {
       "source": "anthropics/skills",
@@ -108,18 +106,18 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/lfarci/flouz.git",
       "skillPath": "skills/flouz/SKILL.md",
-      "skillFolderHash": "14e5e1c01e52da35209a4a85000f1464301e1c98",
+      "skillFolderHash": "16435e8791b8fc51200dfda349feb3bd08522668",
       "installedAt": "2026-05-02T18:57:54.852Z",
-      "updatedAt": "2026-05-11T18:34:18.427Z"
+      "updatedAt": "2026-10-09T19:15:08.041Z"
     },
     "accessibility-a11y": {
       "source": "mindrally/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/mindrally/skills.git",
       "skillPath": "accessibility-a11y/SKILL.md",
-      "skillFolderHash": "b9789ab533140a37cacdb099aaa4503168d8ceff",
+      "skillFolderHash": "89991f55fd86fbf48136e290e54d075c945a65b5",
       "installedAt": "2026-05-11T18:36:19.135Z",
-      "updatedAt": "2026-05-11T18:36:19.135Z"
+      "updatedAt": "2026-10-09T19:15:10.268Z"
     },
     "frontend-accessibility-best-practices": {
       "source": "sergiodxa/agent-skills",
@@ -135,10 +133,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git",
       "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
-      "skillFolderHash": "75e1acaafe8b08e59d4b86fc253ac7873aff6bba",
-      "pluginName": "ui-ux-pro-max",
+      "skillFolderHash": "0b6619c11598d7ce32041044cb2e6fc6adea1efc",
       "installedAt": "2026-05-19T11:33:49.547Z",
-      "updatedAt": "2026-05-19T11:33:49.547Z"
+      "updatedAt": "2026-10-09T19:15:14.188Z"
     },
     "mermaid-diagrams": {
       "source": "softaworks/agent-toolkit",
@@ -148,15 +145,6 @@
       "skillFolderHash": "1b7a962715838d762fe4b34701d797d1d57496cd",
       "installedAt": "2026-05-19T11:35:31.001Z",
       "updatedAt": "2026-05-19T11:35:31.001Z"
-    },
-    "create-implementation-plan": {
-      "source": "github/awesome-copilot",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/github/awesome-copilot.git",
-      "skillPath": "skills/create-implementation-plan/SKILL.md",
-      "skillFolderHash": "dbd2ff5df455bcc96aaf084cf2f86c208062d06b",
-      "installedAt": "2026-05-19T12:34:47.924Z",
-      "updatedAt": "2026-05-19T12:34:47.924Z"
     },
     "github-actions-docs": {
       "source": "xixu-me/skills",
@@ -176,15 +164,44 @@
       "installedAt": "2026-08-08T08:34:36Z",
       "updatedAt": "2026-08-08T08:34:36Z"
     },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "skillFolderHash": "9cdbb4b8f7a3aeaef82e6230c9e823500d4a8a1214c726cf342cf9829d34fc7d",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-09T19:15:49.775Z",
+      "updatedAt": "2026-10-09T19:15:49.775Z"
+    },
     "xlsx": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/xlsx/SKILL.md",
-      "skillFolderHash": "f329f4f6bc54845076a0c7f1fdb9e3848f43df35",
+      "skillFolderHash": "f5945e6e76dc7c178375e5cdf3140959b30cbcd4570ec3dc62296812259fc38d",
       "pluginName": "document-skills",
-      "installedAt": "2026-05-07T17:47:48Z",
-      "updatedAt": "2026-05-07T17:47:48Z"
+      "installedAt": "2026-10-09T19:16:31.613Z",
+      "updatedAt": "2026-10-09T19:16:31.613Z"
+    },
+    "grilling": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/productivity/grilling/SKILL.md",
+      "skillFolderHash": "ef1641a2047b71b60f1942cd35efb47d3afc9d584dff5a0b01f8c7db923aaa08",
+      "pluginName": "mattpocock-skills",
+      "installedAt": "2026-10-09T19:16:39.506Z",
+      "updatedAt": "2026-10-09T19:16:39.506Z"
+    },
+    "drawio-skill": {
+      "source": "agents365-ai/drawio-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/agents365-ai/drawio-skill.git",
+      "skillPath": "skills/drawio-skill/SKILL.md",
+      "skillFolderHash": "1ec9d43f48f9bea066ace6cfbfdd62ac7be133f24d0129205d7e144eef3476d6",
+      "installedAt": "2026-10-09T19:27:41.931Z",
+      "updatedAt": "2026-10-09T19:27:41.931Z"
     }
   },
   "dismissed": {

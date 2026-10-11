@@ -33,6 +33,28 @@ or linked — new symlink mappings, packages, VS Code extensions, or skills.
 Changes to the *contents* of already-linked files take effect as soon as you
 edit or pull them, with no bootstrap needed.
 
+### Linting
+
+CI runs separate ShellCheck and PSScriptAnalyzer workflows for maintained
+scripts. See [`docs/linting.md`](docs/linting.md) for the scope, configuration,
+and local commands.
+
+### Line endings
+
+`.gitattributes` normalizes text to LF in the repository and forces `*.sh`,
+`*.bash`, `*.ps1`, `config/bash/.bashrc` and `config/bash/.bash_aliases` to
+check out with LF even when `core.autocrlf=true`. CRLF in these files breaks
+ShellCheck (`SC1017`) and can make a script fail to run under WSL. If a script was checked out before these rules existed, its worktree copy is
+still CRLF and ShellCheck reports `SC1017` for it. Refresh the affected files
+(deleting forces git to re-checkout using the new attributes):
+
+```powershell
+Remove-Item bootstrap.sh, .shellcheckrc; git checkout -- bootstrap.sh .shellcheckrc
+```
+`config/agents/` is intentionally left to `* text=auto` rather than being
+marked `-text`: those files are owned upstream and marking the tree binary would
+report every vendored file as modified on a CRLF worktree.
+
 ### Skills
 
 Skills are installed straight into the repo: `~/.agents` and `~/.copilot/skills`
@@ -54,3 +76,7 @@ cannot hide behind an unlocked skill directory:
 ```bash
 node tests/skills-inventory-consistency.mjs
 ```
+
+Skills are vendored on purpose, and skill refreshes are reviewed separately from
+bootstrap changes. See [`config/agents/README.md`](config/agents/README.md) for
+the provenance and maintenance policy.

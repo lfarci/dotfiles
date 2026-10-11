@@ -1,0 +1,51 @@
+name: Check PowerShell scripts
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  psscriptanalyzer:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install PSScriptAnalyzer
+        shell: powershell
+        run: Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force -Scope CurrentUser
+
+      - name: Check maintained PowerShell scripts with PSScriptAnalyzer
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Import-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force
+          $analyzer = Get-Module PSScriptAnalyzer
+          if ($analyzer.Version -ne [version]'1.25.0') {
+            throw "Expected PSScriptAnalyzer 1.25.0, got $($analyzer.Version)."
+          }
+
+          $files = @(
+            'bootstrap.ps1'
+            'tests/bootstrap-vscode-extensions.Tests.ps1'
+          )
+
+          $findings = @()
+          foreach ($file in $files) {
+            $findings += @(Invoke-ScriptAnalyzer -Path $file -Settings ./PSScriptAnalyzerSettings.psd1)
+          }
+
+          if ($findings.Count -gt 0) {
+            $findings |
+              Format-Table -AutoSize RuleName, Severity, ScriptName, Line, Message |
+              Out-String -Width 4096 |
+              Write-Host
+            throw "PSScriptAnalyzer reported $($findings.Count) finding(s)."
+          }
+
+          Write-Host 'PSScriptAnalyzer: no findings.'
