@@ -141,3 +141,7 @@ try {
 }
 
 Write-Host 'PASS: bootstrap-vscode-extensions.Tests.ps1'
+# The test intentionally exercises a failing native `code` stub. Clear its
+# exit status so the GitHub Actions PowerShell runner does not mark this
+# successful test script as failed after it returns.
+$global:LASTEXITCODE = 0
