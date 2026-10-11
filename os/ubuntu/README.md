@@ -32,7 +32,6 @@ Restart your terminal for all changes to take effect.
 | `config/vscode/settings.json` | `~/.config/Code/User/settings.json` |
 | `config/vscode/keybindings.json` | `~/.config/Code/User/keybindings.json` |
 | `config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
-| `config/opencode/cli.json` | `~/.config/opencode/cli.json` |
 
 ## Updating
 

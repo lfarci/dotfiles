@@ -130,8 +130,7 @@ link_all() {
     "config/agents:.agents" \
     "config/agents/skills:.copilot/skills" \
     "config/claude/settings.json:.claude/settings.json" \
-    "config/opencode/opencode.json:.config/opencode/opencode.json" \
-    "config/opencode/cli.json:.config/opencode/cli.json"
+    "config/opencode/opencode.json:.config/opencode/opencode.json"
 }
 
 install_oh_my_posh() {

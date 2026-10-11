@@ -167,7 +167,6 @@ function Link-All {
         @{ Src = 'config\agents\skills';               Dst = "$HOME\.copilot\skills" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
         @{ Src = 'config\opencode\opencode.json';      Dst = "$HOME\.config\opencode\opencode.json" }
-        @{ Src = 'config\opencode\cli.json';           Dst = "$HOME\.config\opencode\cli.json" }
     )
 
     foreach ($m in $mappings) {
