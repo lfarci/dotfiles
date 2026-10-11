@@ -1,6 +1,6 @@
 ---
 name: frontend-accessibility-best-practices
-description: Accessibility (a11y) best practices for React components. Use when creating UI components, forms, interactive elements, or reviewing code for accessibility compliance.
+description: React-specific accessibility implementation patterns for components, forms, and interactive elements. Use when building or reviewing React UI; for framework-neutral WCAG audits, use accessibility-a11y.
 ---
 
 # Accessibility Best Practices

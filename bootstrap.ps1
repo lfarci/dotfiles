@@ -241,6 +241,32 @@ function Install-VSCodeExtensions {
 
 # ── PowerShell profile ──────────────────────────────────────────────────────
 
+function Resolve-DocumentsPath {
+    param([string]$KnownFolderPath)
+
+    # Windows can fail to resolve the known folder (for example when Documents
+    # is redirected to an unreachable network share). Fall back to the
+    # home-relative default so setup still completes.
+    if (-not $KnownFolderPath) {
+        return Join-Path $HOME 'Documents'
+    }
+
+    return $KnownFolderPath
+}
+
+function Get-DocumentsPath {
+    $knownFolderPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::MyDocuments)
+    return Resolve-DocumentsPath -KnownFolderPath $knownFolderPath
+}
+
+function Get-PowerShellProfilePath {
+    param([ValidateSet('WindowsPowerShell', 'PowerShell')][string]$Edition)
+
+    # Documents can be redirected (for example to OneDrive), so resolve the real
+    # special-folder path instead of assuming $HOME\Documents.
+    return Join-Path (Join-Path (Get-DocumentsPath) $Edition) 'Microsoft.PowerShell_profile.ps1'
+}
+
 function Add-OhMyPoshToProfile {
     param([string]$ProfilePath)
 
@@ -272,13 +298,10 @@ function Set-OhMyPoshProfile {
         return
     }
 
-    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles
-    $profiles = @(
-        "$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
-        "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-    )
-    foreach ($p in $profiles) {
-        Add-OhMyPoshToProfile -ProfilePath $p
+    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles, each in its
+    # actual loaded location derived from the real Documents folder.
+    foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+        Add-OhMyPoshToProfile -ProfilePath (Get-PowerShellProfilePath -Edition $edition)
     }
 }
 
