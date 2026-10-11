@@ -167,11 +167,49 @@ function Link-All {
         @{ Src = 'config\agents\skills';               Dst = "$HOME\.copilot\skills" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
         @{ Src = 'config\opencode\opencode.json';      Dst = "$HOME\.config\opencode\opencode.json" }
+        @{ Src = 'config\opencode\themes';             Dst = "$HOME\.config\opencode\themes" }
     )
 
     foreach ($m in $mappings) {
         $src = Join-Path $DotfilesDir $m.Src
         Backup-AndLink -Src $src -Dst $m.Dst
+    }
+}
+
+# ── Seed copies ──────────────────────────────────────────────────────────────
+
+# Files a client owns and rewrites after first creation (the TUI replaces
+# cli.json atomically on every settings change) are copied into place only
+# when the destination does not exist: a symlink would be destroyed and a
+# re-link would restore a stale copy over the live preferences.
+function Seed-IfMissing {
+    param([string]$Src, [string]$Dst)
+    $srcPath = Join-Path $DotfilesDir $Src
+    if (-not (Test-Path $srcPath)) {
+        Warn "Source missing: $srcPath"
+        return
+    }
+    if (Test-Path $Dst) {
+        Log "Seed destination exists, leaving untouched: $Dst"
+        return
+    }
+    if (Get-Item $Dst -Force -ErrorAction SilentlyContinue) {
+        Log "Seed destination exists as a dangling link, leaving untouched: $Dst"
+        return
+    }
+    New-Item -Path (Split-Path $Dst -Parent) -ItemType Directory -Force | Out-Null
+    Copy-Item -Path $srcPath -Destination $Dst
+    Log "Seeded $Dst"
+}
+
+# Seed entries carry a Seed key so the mapping-sources test can tell them
+# apart from symlink mappings.
+function Seed-All {
+    $seeds = @(
+        @{ Seed = 'config\opencode\cli.json'; Dst = "$HOME\.config\opencode\cli.json" }
+    )
+    foreach ($s in $seeds) {
+        Seed-IfMissing -Src $s.Seed -Dst $s.Dst
     }
 }
 
@@ -337,6 +375,7 @@ function Invoke-DotfilesBootstrap {
     Install-VSCodeExtensions
     Install-NerdFont
     Link-All
+    Seed-All
     Restore-Skills
     Set-OhMyPoshProfile
 

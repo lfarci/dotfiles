@@ -11,6 +11,13 @@ editing the live files — or letting OpenCode write them (`opencode mcp add
   MCP servers, agents, formatters, and so on. It applies to every project for
   this user. Tracked content is the published `$schema` reference plus whatever
   settings accumulate.
+- `themes/` — custom theme definitions, symlinked as a directory. `midnight`
+  is the builtin OpenCode theme with the dark neutral ramp shifted toward the
+  desktop app background (`#0f0f1d`), so the terminal UI matches the app. The
+  builtin theme omits a `yellow` hue from both modes (resolved at runtime);
+  the extraction preserves that.
+- `cli.json` — TUI preferences, tracked as a **seed snapshot only** (see
+  below). It currently preselects `midnight` in dark mode.
 
 ## Machine-local state (never tracked)
 
@@ -20,17 +27,30 @@ editing the live files — or letting OpenCode write them (`opencode mcp add
   stays outside the repository and is never moved by a re-run.
 - `~/.local/state/opencode/` and `~/.local/share/opencode/` — runtime state,
   sessions, logs, and the database. Never linked or tracked.
+- `~/.config/ai.opencode.desktop/` — the desktop app's Electron home: its
+  `opencode.settings` holds machine-specific window IDs on top of the Chromium
+  cache, so nothing in it is portable.
 
-## cli.json is TUI-owned, not symlinked
+## cli.json is seeded once, then owned by the TUI
 
-`cli.json` — terminal preferences such as theme and keybinds — is deliberately
-not tracked or linked. The TUI persists preference changes with an atomic write
-that replaces the file, so a symlink at that path is destroyed on the first
-settings change: the live file becomes a regular file, the tracked copy goes
-stale, and a later bootstrap would back up the live preferences and restore the
-stale link. Upstream: `anomalyco/opencode#45067`. If the accumulated
-preferences ever become worth versioning, add a copy/snapshot step to the
-bootstraps instead of a symlink.
+The TUI persists preference changes with an atomic write that replaces the
+file, so a symlink at that path is destroyed on the first settings change, and
+a re-link would restore a stale copy over the live preferences. Upstream:
+`anomalyco/opencode#45067`. Instead of symlinking, the bootstraps **copy the
+tracked `cli.json` into place only when the destination does not exist** —
+a fresh machine starts with the `midnight` theme preselected, and every later
+settings change belongs to the TUI on that machine. Expect live edits to
+diverge from the tracked snapshot; refresh the snapshot by hand (copy the live
+file back into the repo) when a preference change is worth keeping.
+
+## Provider connections are per machine
+
+`opencode auth login` stores provider credentials (GitHub Copilot, OpenAI,
+OpenRouter, …) outside the configuration in a machine-local store. Nothing
+about them belongs in this repository: on a fresh machine, run
+`opencode auth login` once per provider you use. Never put API keys in
+`opencode.json`; where a header key is unavoidable, use an environment
+substitution such as `{env:VAR}` instead.
 
 ## Skills
 
