@@ -28,13 +28,6 @@ function Test-CanSymlink {
     }
 }
 
-if (-not (Test-CanSymlink)) {
-    Warn "Cannot create symbolic links."
-    Warn "Either enable Developer Mode (Settings > System > For developers)"
-    Warn "or re-run this script as Administrator."
-    exit 1
-}
-
 # ── PATH refresh ────────────────────────────────────────────────────────────
 
 function Update-EnvPath {
@@ -171,6 +164,7 @@ function Link-All {
         @{ Src = 'config\vscode\keybindings.json';     Dst = "$env:APPDATA\Code\User\keybindings.json" }
         @{ Src = 'config\windows-terminal\settings.json'; Dst = $windowsTerminalSettingsPath }
         @{ Src = 'config\agents';                      Dst = "$HOME\.agents" }
+        @{ Src = 'config\agents\skills';               Dst = "$HOME\.copilot\skills" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
     )
 
@@ -188,36 +182,52 @@ function Restore-Skills {
         return
     }
 
-    $lockFile = Join-Path $HOME '.agents\.skill-lock.json'
+    $agentsDir = Join-Path $HOME '.agents'
+    $lockFile = Join-Path $agentsDir '.skill-lock.json'
     if (-not (Test-Path $lockFile)) {
         Log "No .skill-lock.json found; skipping skills restore."
         return
     }
 
-    Log "Restoring skills from .skill-lock.json..."
-    Push-Location (Join-Path $HOME '.agents')
+    # `experimental_install` restores from .\skills-lock.json into .\.agents\skills\,
+    # so stage a directory whose .agents points at the tracked store and hand it the
+    # tracked lock verbatim (no hashes are recomputed or invented).
+    $staging = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-skills-$([guid]::NewGuid())"
     try {
-        npx skills experimental_install -y
-        if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
-        else                     { Log  "Skills restored." }
+        New-Item -Path $staging -ItemType Directory -Force | Out-Null
+        New-Item -Path (Join-Path $staging '.agents') -ItemType Junction -Target $agentsDir | Out-Null
+        Copy-Item -Path $lockFile -Destination (Join-Path $staging 'skills-lock.json')
+
+        Log "Restoring skills from .skill-lock.json..."
+        Push-Location $staging
+        try {
+            npx skills experimental_install -y
+            if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
+            else                     { Log  "Skills restored." }
+        } finally {
+            Pop-Location
+        }
+    } catch {
+        Warn "Skills restore failed: $($_.Exception.Message)"
     } finally {
-        Pop-Location
+        if (Test-Path $staging) {
+            Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 
-# ── VS Code extensions ────────────────────────────────────────────────────────
+# ── VS Code extensions ──────────────────────────────────────────────────────
 
-function Install-VsCodeExtensions {
+function Install-VSCodeExtensions {
     $extensionsFile = Join-Path $DotfilesDir 'config\vscode\extensions.txt'
     if (-not (Test-Path $extensionsFile)) {
-        Warn "VS Code extension list not found: $extensionsFile"
-        return
+        throw "VS Code extension list not found: $extensionsFile"
     }
 
-    $codeCommand = Get-Command code -ErrorAction SilentlyContinue
+    $codeCommand = Get-Command code -CommandType Application -ErrorAction SilentlyContinue |
+        Select-Object -First 1
     if (-not $codeCommand) {
-        Warn "VS Code CLI 'code' not found; skipping extension install."
-        return
+        throw "VS Code CLI 'code' not found on PATH. Install VS Code, reopen the terminal, and rerun bootstrap."
     }
 
     $extensions = Get-Content $extensionsFile |
@@ -229,17 +239,50 @@ function Install-VsCodeExtensions {
         return
     }
 
+    $failed = [System.Collections.Generic.List[string]]::new()
+
     Log "Installing VS Code extensions..."
     foreach ($extension in $extensions) {
         Log "  $extension"
-        & $codeCommand.Source --install-extension $extension --force
+        & $codeCommand.Path --install-extension $extension --force
         if ($LASTEXITCODE -ne 0) {
-            Warn "  VS Code extension install exited $LASTEXITCODE for $extension"
+            Warn "  extension install exited $LASTEXITCODE for $extension"
+            $failed.Add($extension)
         }
+    }
+
+    if ($failed.Count -gt 0) {
+        throw "Failed to install VS Code extensions: $($failed -join ', ')"
     }
 }
 
 # ── PowerShell profile ──────────────────────────────────────────────────────
+
+function Resolve-DocumentsPath {
+    param([string]$KnownFolderPath)
+
+    # Windows can fail to resolve the known folder (for example when Documents
+    # is redirected to an unreachable network share). Fall back to the
+    # home-relative default so setup still completes.
+    if (-not $KnownFolderPath) {
+        return Join-Path $HOME 'Documents'
+    }
+
+    return $KnownFolderPath
+}
+
+function Get-DocumentsPath {
+    $knownFolderPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::MyDocuments)
+    return Resolve-DocumentsPath -KnownFolderPath $knownFolderPath
+}
+
+function Get-PowerShellProfilePath {
+    param([ValidateSet('WindowsPowerShell', 'PowerShell')][string]$Edition)
+
+    # Documents can be redirected (for example to OneDrive), so resolve the real
+    # special-folder path instead of assuming $HOME\Documents.
+    return Join-Path (Join-Path (Get-DocumentsPath) $Edition) 'Microsoft.PowerShell_profile.ps1'
+}
 
 function Add-OhMyPoshToProfile {
     param([string]$ProfilePath)
@@ -272,24 +315,34 @@ function Set-OhMyPoshProfile {
         return
     }
 
-    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles
-    $profiles = @(
-        "$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
-        "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-    )
-    foreach ($p in $profiles) {
-        Add-OhMyPoshToProfile -ProfilePath $p
+    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles, each in its
+    # actual loaded location derived from the real Documents folder.
+    foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+        Add-OhMyPoshToProfile -ProfilePath (Get-PowerShellProfilePath -Edition $edition)
     }
 }
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
-Install-WingetPackages
-Install-NerdFont
-Link-All
-Install-VsCodeExtensions
-Restore-Skills
-Set-OhMyPoshProfile
+function Invoke-DotfilesBootstrap {
+    if (-not (Test-CanSymlink)) {
+        Warn "Cannot create symbolic links."
+        Warn "Either enable Developer Mode (Settings > System > For developers)"
+        Warn "or re-run this script as Administrator."
+        throw "Symbolic link capability is required."
+    }
 
-Log "Done! Restart your terminal for all changes to take effect."
-Log "Windows Terminal settings are linked from config\\windows-terminal\\settings.json."
+    Install-WingetPackages
+    Install-VSCodeExtensions
+    Install-NerdFont
+    Link-All
+    Restore-Skills
+    Set-OhMyPoshProfile
+
+    Log "Done! Restart your terminal for all changes to take effect."
+    Log "Windows Terminal settings are linked from config\\windows-terminal\\settings.json."
+}
+
+if ($MyInvocation.InvocationName -ne '.') {
+    Invoke-DotfilesBootstrap
+}

@@ -1,50 +1,88 @@
-# VS Code Extension Install Plan
+# VS Code Extension Install From Shared Manifest
 
 ## Goal
 
-Track the preferred VS Code extensions in this repository and have both bootstrap entrypoints install them when the VS Code CLI is available.
+Install the required VS Code extensions during bootstrap on both Windows and Unix-like systems so editor themes and related tooling are available immediately after setup.
 
 ## Constraints
 
-- Keep the existing repo pattern of tracked config under `config/vscode/`.
-- Make extension installation additive and idempotent.
-- Skip the install step cleanly on machines where the `code` CLI is not available yet.
-- Keep unrelated bootstrap and package-install behavior unchanged.
+- Use the VS Code CLI via `code --install-extension <id> --force` rather than OS package managers.
+- Keep a single shared extension list for all supported operating systems.
+- Fit the repo's existing pattern of plain text package manifests and top-level bootstrap orchestration.
+- Fail clearly if `code` is not available on Windows or WSL, where the Windows
+  setup installs VS Code.
+- Warn and skip extension installation on native Ubuntu and Fedora when `code`
+  is unavailable, because their package lists do not install VS Code.
+- Leave unrelated working tree changes untouched.
 
 ## Design
 
-### Tracked configuration
+### Shared manifest
 
-Add `config/vscode/extensions.txt` with one Visual Studio Marketplace extension ID per line. Blank lines and `#` comments are ignored.
+Add `config/vscode/extensions.txt` as a line-delimited manifest of extension IDs.
 
-Seed the initial list with the extensions required by the tracked VS Code settings:
+Behavior:
+
+- One extension ID per line.
+- Allow blank lines.
+- Allow `#` comments so the list stays readable.
+
+Initial contents:
 
 - `catppuccin.catppuccin-vsc`
+- `catppuccin.catppuccin-vsc-icons`
 - `PKief.material-icon-theme`
+- `ms-dotnettools.csharp`
+- `stackbreak.comment-divider`
+- `github.vscode-github-actions`
+- `github.vscode-pull-request-github`
+- `codezombiech.gitignore`
+- `mermaidchart.vscode-mermaid-chart`
 
 ### Bootstrap behavior
 
-Extend both `bootstrap.sh` and `bootstrap.ps1` with a small helper that:
+Extend both `bootstrap.ps1` and `bootstrap.sh` with a dedicated VS Code extension install helper.
 
-1. Reads `config/vscode/extensions.txt`
-2. Skips blank lines and comments
-3. Checks whether the `code` CLI is available
-4. Runs `code --install-extension <id> --force` for each listed extension
+The helper will:
 
-If the file is missing, empty, or the `code` CLI is unavailable, log a warning and continue without failing the rest of bootstrap.
+1. Verify the `code` CLI is available on `PATH`.
+2. Read `config/vscode/extensions.txt`.
+3. Strip comments and blank lines.
+4. Install each listed extension with `code --install-extension <id> --force`.
+5. Continue through the full list even if one install fails.
+6. Fail at the end if any install failed, with a clear message identifying the failing extension IDs.
+
+This keeps bootstrap resilient enough to surface all extension issues in one
+run. A missing editor CLI is a setup failure on Windows and WSL but a warning
+on native Ubuntu and Fedora.
+
+### Ordering
+
+Run the VS Code extension install step after package installation and before
+skills restoration. PowerShell must run it immediately after winget package
+installation refreshes the process `PATH`.
+
+### WSL extension location
+
+The WSL bootstrap uses the Windows `code` CLI. VS Code installs extensions that
+affect the user interface, such as color and icon themes, locally on Windows.
+The Windows PowerShell phase links `config/vscode/settings.json` into
+`%APPDATA%\Code\User`, so it remains responsible for selecting the tracked
+theme.
 
 ### Documentation
 
-Update the root and OS setup docs to describe the new repo-managed VS Code extension list and when it is applied.
+Update the top-level README to mention that VS Code settings are linked from `config/vscode/` and that extensions are installed from `config/vscode/extensions.txt` during bootstrap.
 
 ## Validation
 
-- Run shell syntax checks on `bootstrap.sh` and the sourced OS install scripts.
-- Run a PowerShell parse check on `bootstrap.ps1`.
-- Manually exercise the Bash bootstrap with a stub `code` command to verify listed extensions are installed from `config/vscode/extensions.txt`.
+- Confirm the new manifest is parsed correctly on both PowerShell and bash with comments and blank lines present.
+- Run focused syntax checks on `bootstrap.ps1` and `bootstrap.sh` after editing.
+- Verify the README accurately describes the new shared manifest behavior.
 
 ## Out of scope
 
-- Uninstalling extensions that are not listed in `extensions.txt`
-- Adding OS-specific VS Code extension lists
-- Installing VS Code itself on Linux distributions that do not already provide the `code` CLI
+- OS-specific or machine-specific extension manifests.
+- Automatic export of the extension list from a live VS Code installation.
+- Profile-specific VS Code extension installation.
+- Installing VS Code itself outside the existing package-management flow.

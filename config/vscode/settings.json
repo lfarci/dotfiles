@@ -70,5 +70,10 @@
       "approveRequest": false,
       "approveResponse": true
     }
-  }
+  },
+  "azureTerraform.survey": {
+    "surveyPromptDate": "2026-05-29T10:11:28.713Z",
+    "surveyPromptIgnoredCount": 1
+  },
+  "diffEditor.ignoreTrimWhitespace": false
 }

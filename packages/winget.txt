@@ -1,8 +1,11 @@
 Git.Git
+GitHub.cli
 Microsoft.VisualStudioCode
 Microsoft.WindowsTerminal
+Microsoft.AzureCLI
 OpenJS.NodeJS.LTS
 JanDeDobbeleer.OhMyPosh
 BurntSushi.ripgrep.MSVC
+Hashicorp.Terraform
 junegunn.fzf
 eza-community.eza

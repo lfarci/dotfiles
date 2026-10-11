@@ -1,0 +1,21 @@
+name: "Check test: docker-service-activation"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bash:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check Bash syntax
+        run: bash -n tests/docker-service-activation.bash
+      - name: Run Bash assertions
+        run: bash tests/docker-service-activation.bash
