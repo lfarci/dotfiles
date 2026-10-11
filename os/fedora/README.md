@@ -31,6 +31,8 @@ Restart your terminal for all changes to take effect.
 | `config/ohmyposh/theme.omp.json` | `~/.config/ohmyposh/theme.omp.json` |
 | `config/vscode/settings.json` | `~/.config/Code/User/settings.json` |
 | `config/vscode/keybindings.json` | `~/.config/Code/User/keybindings.json` |
+| `config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
+| `config/opencode/cli.json` | `~/.config/opencode/cli.json` |
 
 ## Updating
 

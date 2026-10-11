@@ -93,6 +93,8 @@ The authoritative list is `packages/winget.txt`; the table mirrors it.
 | `config/agents` | `~\.agents` |
 | `config/agents/skills` | `~\.copilot\skills` |
 | `config/claude/settings.json` | `~\.claude\settings.json` |
+| `config/opencode/opencode.json` | `~\.config\opencode\opencode.json` |
+| `config/opencode/cli.json` | `~\.config\opencode\cli.json` |
 
 ### Windows Terminal settings
 
