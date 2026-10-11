@@ -26,10 +26,15 @@ install script therefore:
 - **Avoids plain sudo:** build a `sudo_cmd=()` array (empty when running as
   root, `(sudo)` otherwise) and skip the step with a `warn` when neither is
   available.
-- **Passes `SYSTEMD_OFFLINE=1`** to `apt-get`/`dnf` invocations: containers and
-  WSL may lack systemd. Docker service activation explicitly checks
-  `systemd_is_running` and defers with actionable instructions otherwise
-  (`/etc/wsl.conf` `[boot] systemd=true` on WSL).
+- **Ubuntu's `apt-get` invocations pass `SYSTEMD_OFFLINE=1`** so dpkg
+  maintainer scripts skip systemd in containers and WSL. This is an
+  apt/dpkg-specific mechanism: Fedora's `dnf` calls do not pass it and have
+  no equivalent guard today — do not present it as a cross-platform
+  invariant.
+- **Docker service activation defers when systemd is absent:**
+  `systemd_is_running` (`/run/systemd/system`) gates `systemctl enable
+  --now docker`, with actionable instructions otherwise (`/etc/wsl.conf`
+  `[boot] systemd=true` on WSL).
 - **Adds third-party tools via their official keyring + repo flow** (gh,
   terraform, azure-cli, docker on Linux). Ordinary distro packages belong in
   `packages/apt.txt` / `packages/dnf.txt`, not in `install.sh`. Windows is the

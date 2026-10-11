@@ -42,7 +42,12 @@ These are load-bearing; preserve them in any change.
   as `npx` and `code` on native Linux warn and skip; a missing `code` on
   Windows/WSL is actionable and fails.
 - **Link mappings are explicit.** Bash: `link_all`'s `link_mappings` list.
-  PowerShell: `Link-All`'s `$mappings` array. Keep both in sync.
+  PowerShell: `Link-All`'s `$mappings` array. Keep the **shared** mappings in
+  sync across both (git, oh-my-posh, VS Code, `config/agents`, Claude) — but
+  the platform-specific ones are deliberate: Bash links `.bashrc`,
+  `.bash_aliases`, `.inputrc`, and Ghostty; PowerShell links Windows Terminal
+  settings. Destinations also legitimately differ per OS (e.g. VS Code lives
+  under `~/.config/Code/User` on Linux, `$env:APPDATA\Code\User` on Windows).
 
 ## Line endings
 
