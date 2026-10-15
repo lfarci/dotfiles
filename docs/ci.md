@@ -12,6 +12,8 @@ Each lightweight assertion suite has a dedicated `check-test-<script>` workflow:
   runs the PowerShell profile path assertions.
 - [`check-test-bootstrap-mapping-sources.yml`](../.github/workflows/check-test-bootstrap-mapping-sources.yml)
   runs the Bash and PowerShell bootstrap mapping/seed assertions.
+- [`check-test-bootstrap-opencode-install.yml`](../.github/workflows/check-test-bootstrap-opencode-install.yml)
+  runs the OpenCode CLI installer guard assertions.
 
 These workflows run on pull requests, pushes to `main`, and manual dispatch.
 The assertions live in `tests/`; each workflow checks out the repo and invokes

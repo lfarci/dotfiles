@@ -19,6 +19,7 @@ Restart your terminal for all changes to take effect.
 
 - Packages from `packages/dnf.txt` via `dnf`
 - [Oh My Posh](https://ohmyposh.dev) prompt to `~/.local/bin`
+- [OpenCode](https://opencode.ai) CLI to `~/.opencode/bin` via the official installer (`--no-modify-path`; `PATH` is set by `config/bash/.bashrc`)
 - VS Code extensions from `config/vscode/extensions.txt` when `code` is already available
 
 ## What gets symlinked

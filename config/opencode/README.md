@@ -19,6 +19,15 @@ editing the live files — or letting OpenCode write them (`opencode mcp add
 - `cli.json` — TUI preferences, tracked as a **seed snapshot only** (see
   below). It currently preselects `midnight` in dark mode.
 
+## CLI installation
+
+`bootstrap.sh` installs the OpenCode CLI with the official installer when
+`curl` is available, guarded by `command -v opencode` so an existing install is
+left alone. It runs the installer with `--no-modify-path`: `~/.bashrc` is a
+symlink to the tracked `config/bash/.bashrc`, so the installer must not edit
+shell config — that file adds `~/.opencode/bin` to `PATH` instead. Installation
+is Linux-only for now; Windows machines install OpenCode themselves.
+
 ## Machine-local state (never tracked)
 
 - `service.json` in `~/.config/opencode/` — the background-service auth token

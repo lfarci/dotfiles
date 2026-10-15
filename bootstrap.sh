@@ -213,6 +213,28 @@ install_oh_my_posh() {
   fi
 }
 
+install_opencode() {
+  if command -v opencode >/dev/null 2>&1; then
+    log "opencode already installed"
+    return
+  fi
+
+  if ! command -v curl >/dev/null 2>&1; then
+    warn "curl not found; skipping opencode install"
+    return
+  fi
+
+  # --no-modify-path keeps the installer from editing shell config files:
+  # ~/.bashrc is a symlink to the tracked config/bash/.bashrc, so the installer
+  # must not append to it. PATH is managed by config/bash/.bashrc instead.
+  log "Installing OpenCode CLI..."
+  if curl -fsSL https://opencode.ai/v2/install | bash -s -- --no-modify-path; then
+    log "Installed OpenCode CLI"
+  else
+    warn "Failed to install OpenCode CLI"
+  fi
+}
+
 detect_os() {
   if grep -qi microsoft /proc/version 2>/dev/null; then
     echo "windows"
@@ -361,6 +383,7 @@ main() {
   fi
 
   install_oh_my_posh
+  install_opencode
   link_all
   seed_all
   install_nvm_node

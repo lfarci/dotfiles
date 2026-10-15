@@ -7,6 +7,9 @@ VS Code settings and keybindings live under `config/vscode/`. Both bootstrap
 entrypoints install the extensions declared in `config/vscode/extensions.txt`
 when the VS Code CLI is available.
 
+OpenCode configuration lives under `config/opencode/`, and `bootstrap.sh`
+installs the OpenCode CLI when `curl` is available.
+
 ## Setup
 
 - [Windows](os/windows/README.md)

@@ -8,6 +8,15 @@ if [ -d "$HOME/.local/bin" ]; then
   esac
 fi
 
+# Add the OpenCode CLI to PATH. The bootstrap installs it with
+# --no-modify-path, so this file owns the PATH entry.
+if [ -d "$HOME/.opencode/bin" ]; then
+  case ":$PATH:" in
+    *":$HOME/.opencode/bin:"*) ;;
+    *) export PATH="$PATH:$HOME/.opencode/bin" ;;
+  esac
+fi
+
 # Load aliases
 if [ -f "$HOME/.bash_aliases" ]; then
   . "$HOME/.bash_aliases"
