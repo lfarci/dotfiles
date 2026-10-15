@@ -19,6 +19,8 @@ Marketplace access, and no writes outside a per-test temp directory.
 | `git-credential-helper.bash` | own `check-test-*` workflow |
 | `windows-terminal-settings.bash` | own `check-test-*` workflow |
 | `docker-service-activation.bash` | own `check-test-*` workflow (runs `bash -n` first) |
+| `update-script.bash` | own `check-test-*` workflow |
+| `cleanup-script.bash` | own `check-test-*` workflow |
 | `fixtures/` | shared stubs (e.g. `code-stub.bash`, in the ShellCheck lint scope) |
 
 Heavy Docker bootstrap builds (`os/*/Dockerfile`) run only on the weekly

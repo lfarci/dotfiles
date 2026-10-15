@@ -16,8 +16,8 @@ warning severity:
 ```bash
 shellcheck --severity=warning \
   bootstrap.sh os/ubuntu/install.sh os/fedora/install.sh \
-  os/windows/install.sh tests/bootstrap-vscode-extensions.bash \
-  tests/fixtures/code-stub.bash
+  os/windows/install.sh scripts/update.sh scripts/cleanup.sh \
+  tests/bootstrap-vscode-extensions.bash tests/fixtures/code-stub.bash
 ```
 
 `.shellcheckrc` provides `external-sources` and `source-path=SCRIPTDIR:.` so

@@ -30,6 +30,15 @@ git pull --ff-only
 ./bootstrap.sh       # bootstrap.ps1 on Windows
 ```
 
+The same flow is available as `scripts/update.sh` (Bash), which refuses to run
+unless the checkout is on the expected branch with a clean working tree, then
+runs `git pull --ff-only` and `./bootstrap.sh`. See `scripts/update.sh --help`.
+
+To reclaim disk space, `scripts/cleanup.sh` (Bash) lists stale
+`~/.dotfiles_backup_*` directories older than a configurable age and only
+deletes them when passed `--apply`; it is a dry run by default. See
+`scripts/cleanup.sh --help`.
+
 Re-running the bootstrap is safe and idempotent: correct symlinks are left
 alone, and anything else is backed up to `~/.dotfiles_backup_<timestamp>/`
 before being re-linked. Only re-run it after changes to *what* gets installed

@@ -14,6 +14,7 @@ repo file, never the link target.
 | `os/<os>/install.sh` | per-OS package/tool installers sourced by `bootstrap.sh` |
 | `packages/` | package manifests: `apt.txt`, `dnf.txt`, `winget.txt` |
 | `config/` | tracked dotfiles, symlinked into `$HOME` |
+| `scripts/` | repo-maintained helper scripts (`update.sh`, `cleanup.sh`) |
 | `config/agents/` | vendored skills store — see `config/agents/AGENTS.md` |
 | `tests/` | assertion suites — see `tests/AGENTS.md` |
 | `os/` | OS installers + Dockerfiles — see `os/AGENTS.md` |
@@ -61,9 +62,11 @@ pinned to `eol=lf` because CRLF breaks ShellCheck (`SC1017`) or Linux execution.
 
 ```bash
 # Bash syntax + maintained ShellCheck scope (keep in sync with CI)
-bash -n bootstrap.sh os/windows/install.sh os/ubuntu/install.sh os/fedora/install.sh
+bash -n bootstrap.sh os/windows/install.sh os/ubuntu/install.sh os/fedora/install.sh \
+  scripts/update.sh scripts/cleanup.sh
 shellcheck --severity=warning \
   bootstrap.sh os/ubuntu/install.sh os/fedora/install.sh os/windows/install.sh \
+  scripts/update.sh scripts/cleanup.sh \
   tests/bootstrap-vscode-extensions.bash tests/fixtures/code-stub.bash
 
 # Assertion suites (see tests/AGENTS.md for the full set)
