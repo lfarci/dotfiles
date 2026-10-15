@@ -93,6 +93,13 @@ The authoritative list is `packages/winget.txt`; the table mirrors it.
 | `config/agents` | `~\.agents` |
 | `config/agents/skills` | `~\.copilot\skills` |
 | `config/claude/settings.json` | `~\.claude\settings.json` |
+| `config/opencode/opencode.json` | `~\.config\opencode\opencode.json` |
+| `config/opencode/themes` | `~\.config\opencode\themes` |
+
+`config/opencode/cli.json` (theme selection) is not symlinked: it is copied to
+`~\.config\opencode\cli.json` on the first bootstrap only, and the TUI owns
+that file afterwards — later settings changes are not versioned. See
+`config/opencode/README.md`.
 
 ### Windows Terminal settings
 

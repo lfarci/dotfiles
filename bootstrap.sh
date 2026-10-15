@@ -129,7 +129,60 @@ link_all() {
     "config/bash/.inputrc:.inputrc" \
     "config/agents:.agents" \
     "config/agents/skills:.copilot/skills" \
-    "config/claude/settings.json:.claude/settings.json"
+    "config/claude/settings.json:.claude/settings.json" \
+    "config/opencode/opencode.json:.config/opencode/opencode.json" \
+    "config/opencode/themes:.config/opencode/themes"
+}
+
+# Copy a "seed:source:destination" entry into $HOME only when the destination
+# does not exist. Used for files a client owns and rewrites after first
+# creation (the TUI replaces cli.json atomically on every settings change), so
+# a symlink would be destroyed and a re-link would restore a stale copy over
+# the live preferences.
+seed_if_missing() {
+  local src="$DOTFILES_DIR/$1"
+  local dst="$HOME/$2"
+
+  if [[ ! -e "$src" ]]; then
+    warn "Source missing: $src"
+    return 0
+  fi
+
+  if [[ -e "$dst" || -L "$dst" ]]; then
+    log "Seed destination exists, leaving untouched: $dst"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$dst")"
+  if ! cp "$src" "$dst"; then
+    warn "Failed to seed $dst"
+    return 1
+  fi
+  log "Seeded $dst"
+}
+
+# Seed entries carry a "seed:" prefix so the mapping-sources test can tell
+# them apart from symlink mappings.
+seed_all() {
+  local failed=0 entry spec src dst
+
+  # The list intentionally starts with a single entry and grows as more seed
+  # files appear; the loop shape keeps seeding uniform with link_mappings.
+  # shellcheck disable=SC2043
+  for entry in \
+    "seed:config/opencode/cli.json:.config/opencode/cli.json"; do
+    spec="${entry#seed:}"
+    src="${spec%%:*}"
+    dst="${spec#*:}"
+    if ! seed_if_missing "$src" "$dst"; then
+      failed=1
+    fi
+  done
+
+  if [[ "$failed" -ne 0 ]]; then
+    warn "One or more configs could not be seeded"
+    return 1
+  fi
 }
 
 install_oh_my_posh() {
@@ -157,6 +210,28 @@ install_oh_my_posh() {
     log "Installed oh-my-posh to $install_dir"
   else
     warn "Failed to install oh-my-posh"
+  fi
+}
+
+install_opencode() {
+  if command -v opencode >/dev/null 2>&1; then
+    log "opencode already installed"
+    return
+  fi
+
+  if ! command -v curl >/dev/null 2>&1; then
+    warn "curl not found; skipping opencode install"
+    return
+  fi
+
+  # --no-modify-path keeps the installer from editing shell config files:
+  # ~/.bashrc is a symlink to the tracked config/bash/.bashrc, so the installer
+  # must not append to it. PATH is managed by config/bash/.bashrc instead.
+  log "Installing OpenCode CLI..."
+  if curl -fsSL https://opencode.ai/v2/install | bash -s -- --no-modify-path; then
+    log "Installed OpenCode CLI"
+  else
+    warn "Failed to install OpenCode CLI"
   fi
 }
 
@@ -308,7 +383,9 @@ main() {
   fi
 
   install_oh_my_posh
+  install_opencode
   link_all
+  seed_all
   install_nvm_node
   install_vscode_extensions
   install_skills

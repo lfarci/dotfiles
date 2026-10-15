@@ -1,10 +1,14 @@
 # Dotfiles
 
-Personal dotfiles for bash, git, terminal prompt (Oh My Posh), and VS Code.
+Personal dotfiles for bash, git, terminal prompt (Oh My Posh), VS Code, and
+OpenCode.
 
 VS Code settings and keybindings live under `config/vscode/`. Both bootstrap
 entrypoints install the extensions declared in `config/vscode/extensions.txt`
 when the VS Code CLI is available.
+
+OpenCode configuration lives under `config/opencode/`, and `bootstrap.sh`
+installs the OpenCode CLI when `curl` is available.
 
 ## Setup
 

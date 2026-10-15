@@ -19,6 +19,7 @@ Restart your terminal for all changes to take effect.
 
 - Packages from `packages/apt.txt` via `apt`
 - [Oh My Posh](https://ohmyposh.dev) prompt to `~/.local/bin`
+- [OpenCode](https://opencode.ai) CLI to `~/.opencode/bin` via the official installer (`--no-modify-path`; `PATH` is set by `config/bash/.bashrc`)
 - VS Code extensions from `config/vscode/extensions.txt` when `code` is already available
 
 ## What gets symlinked
@@ -31,6 +32,13 @@ Restart your terminal for all changes to take effect.
 | `config/ohmyposh/theme.omp.json` | `~/.config/ohmyposh/theme.omp.json` |
 | `config/vscode/settings.json` | `~/.config/Code/User/settings.json` |
 | `config/vscode/keybindings.json` | `~/.config/Code/User/keybindings.json` |
+| `config/opencode/opencode.json` | `~/.config/opencode/opencode.json` |
+| `config/opencode/themes` | `~/.config/opencode/themes` |
+
+`config/opencode/cli.json` (theme selection) is not symlinked: it is copied to
+`~/.config/opencode/cli.json` on the first bootstrap only, and the TUI owns
+that file afterwards — later settings changes are not versioned. See
+`config/opencode/README.md`.
 
 ## Updating
 
