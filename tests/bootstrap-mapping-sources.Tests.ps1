@@ -49,8 +49,11 @@ try {
 
     # A dangling link destination is left alone rather than replaced.
     if (Test-CanSymlink) {
+        $goneTarget = Join-Path $sandbox 'gone'
+        Set-Content -Path $goneTarget -Value 'temp' -NoNewline
         $danglingDestination = Join-Path $seedHome '.config\opencode\dangling.json'
-        New-Item -Path $danglingDestination -ItemType SymbolicLink -Target (Join-Path $sandbox 'gone') | Out-Null
+        New-Item -Path $danglingDestination -ItemType SymbolicLink -Target $goneTarget | Out-Null
+        Remove-Item $goneTarget -Force
         Seed-IfMissing -Src 'config\opencode\cli.json' -Dst $danglingDestination
         Assert-True ((Get-Item $danglingDestination -Force).LinkType -eq 'SymbolicLink') 'a dangling link destination was replaced'
     } else {
