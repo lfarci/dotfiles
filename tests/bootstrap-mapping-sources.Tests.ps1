@@ -15,7 +15,10 @@ function Assert-True {
     }
 }
 
-# ── Seed-IfMissing / Seed-All: copy once, never overwrite ────────────────────
+# ── Seed-IfMissing: copy once, never overwrite ───────────────────────────────
+# $HOME is read-only in PowerShell, so Seed-All is not exercised end to end
+# here; its wiring is checked below by reading the Seed entries out of
+# bootstrap.ps1, the same way the Bash suite parses them.
 
 $sandbox = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-seed-test-$([guid]::NewGuid())"
 $repoSandbox = Join-Path $sandbox 'repo'
@@ -25,7 +28,6 @@ New-Item -Path $seedHome -ItemType Directory -Force | Out-Null
 Set-Content -Path (Join-Path $repoSandbox 'config\opencode\cli.json') -Value '{"theme":"midnight"}' -NoNewline
 
 $originalDotfilesDir = $DotfilesDir
-$originalHome = $HOME
 $DotfilesDir = $repoSandbox
 
 try {
@@ -45,15 +47,6 @@ try {
     Seed-IfMissing -Src 'config\opencode\does-not-exist.json' -Dst $missingDestination
     Assert-True (-not (Test-Path $missingDestination)) 'a missing source must not create a destination'
 
-    # Seed-All wires the tracked cli.json into ~/.config/opencode.
-    $seedAllHome = Join-Path $sandbox 'home-seed-all'
-    New-Item -Path $seedAllHome -ItemType Directory -Force | Out-Null
-    $HOME = $seedAllHome
-    Seed-All
-    $wiredDestination = Join-Path $seedAllHome '.config\opencode\cli.json'
-    Assert-True (Test-Path $wiredDestination) 'Seed-All did not seed ~/.config/opencode/cli.json'
-    Assert-True ((Get-Content $wiredDestination -Raw) -eq '{"theme":"midnight"}') 'Seed-All seeded the wrong content'
-
     # A dangling link destination is left alone rather than replaced.
     if (Test-CanSymlink) {
         $danglingDestination = Join-Path $seedHome '.config\opencode\dangling.json'
@@ -64,11 +57,17 @@ try {
         Write-Host 'SKIP: dangling-link seed assertion (symlink creation unavailable)'
     }
 
-    # The tracked seed source exists in the real repository.
-    Assert-True (Test-Path (Join-Path $RepoDir 'config\opencode\cli.json')) 'the tracked cli.json seed source is missing'
+    # Every seed entry in bootstrap.ps1 must reference a tracked source.
+    $content = Get-Content (Join-Path $RepoDir 'bootstrap.ps1') -Raw
+    $seedSources = @([regex]::Matches($content, "@\{ Seed = '([^']+)'") | ForEach-Object {
+        $_.Groups[1].Value -replace '\\', '/'
+    })
+    Assert-True ($seedSources.Count -ge 1) 'bootstrap.ps1 declares no Seed entries'
+    foreach ($source in $seedSources) {
+        Assert-True (Test-Path (Join-Path $RepoDir $source)) "seed source '$source' is missing from the repository"
+    }
 } finally {
     $DotfilesDir = $originalDotfilesDir
-    $HOME = $originalHome
     if (Test-Path $sandbox) {
         Remove-Item $sandbox -Recurse -Force -ErrorAction SilentlyContinue
     }
