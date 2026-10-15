@@ -27,13 +27,18 @@ threshold is passed on the command line because it is not a supported rc key.
 ## PowerShell
 
 PSScriptAnalyzer 1.25.0 is installed and explicitly imported at that version;
-the workflow verifies the loaded version before analyzing `bootstrap.ps1` and
-the Pester test using `PSScriptAnalyzerSettings.psd1`.
+the workflow verifies the loaded version before analyzing the bootstrap
+entrypoint, the maintained `scripts/` helpers, and the Pester test using
+`PSScriptAnalyzerSettings.psd1`. Test suites do not enter the analyzer scope
+(only `tests/bootstrap-vscode-extensions.Tests.ps1`, which predates that split,
+is analyzed).
 
 ```powershell
 Install-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force -Scope CurrentUser
 Import-Module PSScriptAnalyzer -RequiredVersion 1.25.0 -Force
 Invoke-ScriptAnalyzer -Path bootstrap.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+Invoke-ScriptAnalyzer -Path scripts/update.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+Invoke-ScriptAnalyzer -Path scripts/cleanup.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 Invoke-ScriptAnalyzer -Path tests/bootstrap-vscode-extensions.Tests.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 ```
 

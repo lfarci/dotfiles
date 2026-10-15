@@ -53,6 +53,12 @@ so edits to `config/` (including a `git pull` that changes them) apply
 immediately; re-run the bootstrap only when symlink mappings, packages,
 extensions, or skills change.
 
+`scripts/update.sh` wraps this flow (`--help`): it refuses unless the checkout
+is on the expected branch with a clean working tree, then runs
+`git pull --ff-only` and `./bootstrap.sh`. `scripts/cleanup.sh` reclaims stale
+`~/.dotfiles_backup_*` directories and deletes them only with `--apply` (dry run
+by default).
+
 ## Notes
 
 - Run `source ~/.bashrc` or restart the terminal after the first install.

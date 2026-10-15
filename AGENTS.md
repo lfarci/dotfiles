@@ -78,6 +78,8 @@ bash tests/skills-inventory-consistency.bash
 ```powershell
 # Maintained PowerShell lint scope (PSScriptAnalyzer 1.25.0)
 Invoke-ScriptAnalyzer -Path bootstrap.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+Invoke-ScriptAnalyzer -Path scripts/update.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+Invoke-ScriptAnalyzer -Path scripts/cleanup.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 Invoke-ScriptAnalyzer -Path tests/bootstrap-vscode-extensions.Tests.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 ```
 

@@ -19,8 +19,8 @@ Marketplace access, and no writes outside a per-test temp directory.
 | `git-credential-helper.bash` | own `check-test-*` workflow |
 | `windows-terminal-settings.bash` | own `check-test-*` workflow |
 | `docker-service-activation.bash` | own `check-test-*` workflow (runs `bash -n` first) |
-| `update-script.bash` | own `check-test-*` workflow |
-| `cleanup-script.bash` | own `check-test-*` workflow |
+| `update-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs) |
+| `cleanup-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs) |
 | `fixtures/` | shared stubs (e.g. `code-stub.bash`, in the ShellCheck lint scope) |
 
 Heavy Docker bootstrap builds (`os/*/Dockerfile`) run only on the weekly
@@ -62,10 +62,14 @@ schedule or manual `run_installation=true`; see `docs/ci.md`.
 - **Symlink-dependent assertions skip, not fail,** when the platform cannot
   create real symlinks (probe first — see `can_symlink` in
   `bootstrap-backup.bash`).
-- **Keep suites ShellCheck-clean.** Files intentionally in the lint scope
-  (currently `bootstrap-vscode-extensions.bash`, `fixtures/code-stub.bash`)
-  must pass `shellcheck --severity=warning`; `.shellcheckrc` resolves
-  cross-file `source` directives so no inline suppressions are needed.
+- **Keep suites ShellCheck-clean.** Files intentionally in the ShellCheck lint
+  scope (currently `bootstrap-vscode-extensions.bash`,
+  `fixtures/code-stub.bash`, and the maintained `scripts/*.sh`) must pass
+  `shellcheck --severity=warning`; `.shellcheckrc` resolves cross-file `source`
+  directives so no inline suppressions are needed. Test suites do **not** enter
+  the PSScriptAnalyzer or ShellCheck scopes: only `bootstrap.ps1`, the
+  maintained `scripts/*.ps1`, and the pre-existing
+  `bootstrap-vscode-extensions.Tests.ps1` are analyzed.
 
 ## Adding a suite
 

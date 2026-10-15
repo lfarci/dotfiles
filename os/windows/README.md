@@ -155,6 +155,12 @@ git pull --ff-only
 pwsh -ExecutionPolicy Bypass -File .\bootstrap.ps1
 ```
 
+`scripts\update.ps1` wraps this flow (`.\scripts\update.ps1 -Help`): it refuses
+unless the checkout is on the expected branch with a clean working tree, then
+runs `git pull --ff-only` and `.\bootstrap.ps1`. `scripts\cleanup.ps1` lists
+stale `~/.dotfiles_backup_*` directories and deletes them only when passed
+`-Apply` (dry run by default).
+
 Then repeat `git pull` + `./bootstrap.sh` inside WSL for the Linux side.
 Both bootstraps are idempotent — re-running is safe. Config files are
 symlinked, so edits to `config/` (including a `git pull` that changes them)

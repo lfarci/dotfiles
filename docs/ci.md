@@ -15,9 +15,11 @@ Each lightweight assertion suite has a dedicated `check-test-<script>` workflow:
 - [`check-test-bootstrap-opencode-install.yml`](../.github/workflows/check-test-bootstrap-opencode-install.yml)
   runs the OpenCode CLI installer guard assertions.
 - [`check-test-update-script.yml`](../.github/workflows/check-test-update-script.yml)
-  runs the `scripts/update.sh` precondition assertions.
+  runs the `scripts/update.sh` precondition assertions and the
+  `scripts/update.ps1` PowerShell counterpart.
 - [`check-test-cleanup-script.yml`](../.github/workflows/check-test-cleanup-script.yml)
-  runs the `scripts/cleanup.sh` refusal/deletion assertions.
+  runs the `scripts/cleanup.sh` refusal/deletion assertions and the
+  `scripts/cleanup.ps1` PowerShell counterpart.
 
 These workflows run on pull requests, pushes to `main`, and manual dispatch.
 The assertions live in `tests/`; each workflow checks out the repo and invokes
