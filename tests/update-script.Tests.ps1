@@ -19,7 +19,9 @@ function Assert-True {
 # safety messages can be asserted without a subprocess.
 function Get-CapturedOutput {
     param([scriptblock]$Body)
-    return (& $Body *>&1 | Out-String)
+    # -Width 4096: Windows PowerShell 5.1 wraps Out-String at the console width,
+    # which splits long sandbox paths mid-name and breaks substring assertions.
+    return (& $Body *>&1 | Out-String -Width 4096)
 }
 
 # A stub `git` on PATH driven by environment variables, so the preconditions can

@@ -17,7 +17,9 @@ function Assert-True {
 
 function Get-CapturedOutput {
     param([scriptblock]$Body)
-    return (& $Body *>&1 | Out-String)
+    # -Width 4096: Windows PowerShell 5.1 wraps Out-String at the console width,
+    # which splits long sandbox paths mid-name and breaks substring assertions.
+    return (& $Body *>&1 | Out-String -Width 4096)
 }
 
 function Test-CanSymlink {
@@ -80,9 +82,9 @@ try {
     New-Item -Path $oldSuffix -ItemType Directory -Force | Out-Null
     New-Item -Path $recent -ItemType Directory -Force | Out-Null
     New-Item -Path $unmanaged -ItemType Directory -Force | Out-Null
-    (Get-Item -LiteralPath $old).LastWriteTime       = (Get-Date).AddDays(-100)
-    (Get-Item -LiteralPath $oldSuffix).LastWriteTime = (Get-Date).AddDays(-100)
-    (Get-Item -LiteralPath $unmanaged).LastWriteTime = (Get-Date).AddDays(-100)
+    (Get-Item -LiteralPath $old -Force).LastWriteTime       = (Get-Date).AddDays(-100)
+    (Get-Item -LiteralPath $oldSuffix -Force).LastWriteTime = (Get-Date).AddDays(-100)
+    (Get-Item -LiteralPath $unmanaged -Force).LastWriteTime = (Get-Date).AddDays(-100)
     New-Item -Path (Join-Path $sandboxHome '.config\opencode') -ItemType Directory -Force | Out-Null
     Set-Content -Path (Join-Path $sandboxHome '.config\opencode\opencode.json') -Value '{}' -Encoding Ascii
 
@@ -137,7 +139,7 @@ try {
     $outside = Join-Path $sandbox 'outside'
     New-Item -Path $outside -ItemType Directory -Force | Out-Null
     Assert-True (-not (Remove-StaleBackup -Item (Get-Item -LiteralPath $outside) -HomePath $sandboxHome)) 'a path outside HOME must be refused'
-    Assert-True (-not (Remove-StaleBackup -Item (Get-Item -LiteralPath $unmanaged) -HomePath $sandboxHome)) 'an unrecognized name must be refused'
+    Assert-True (-not (Remove-StaleBackup -Item (Get-Item -LiteralPath $unmanaged -Force) -HomePath $sandboxHome)) 'an unrecognized name must be refused'
     Assert-True (Test-Path -LiteralPath $unmanaged) 'an unrecognized name was removed'
     if ($haveReparse) {
         $reparseItem = Get-Item -LiteralPath $reparse -Force
@@ -148,7 +150,7 @@ try {
     # ── age threshold ───────────────────────────────────────────────────────
     $aged = Join-Path $sandboxHome '.dotfiles_backup_20200104000000'
     New-Item -Path $aged -ItemType Directory -Force | Out-Null
-    (Get-Item -LiteralPath $aged).LastWriteTime = (Get-Date).AddDays(-100)
+    (Get-Item -LiteralPath $aged -Force).LastWriteTime = (Get-Date).AddDays(-100)
 
     Invoke-Cleanup -Apply -MinAgeDays 3650 | Out-Null
     Assert-True (Test-Path -LiteralPath $aged) 'a backup younger than the threshold must be kept'
