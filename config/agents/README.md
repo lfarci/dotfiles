@@ -107,9 +107,6 @@ Both lists should be empty. A skill in the lock file with no vendored directory,
 or a vendored skill with no lock entry, is drift and should be resolved in the
 same commit.
 
-> Known drift (documented, not fixed here): `brainstorming` is in the lock file
-> with no vendored directory, and `xlsx` is vendored with no lock entry.
-
 When comparing vendored content on Windows, normalize line endings before
 hashing — this repository checks out CRLF (`core.autocrlf=true`) while the
 stored blobs are LF, so a raw byte comparison reports every file as changed.
