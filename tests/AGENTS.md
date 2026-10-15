@@ -13,6 +13,7 @@ Marketplace access, and no writes outside a per-test temp directory.
 | `bootstrap-skills-restore.bash` | `run-installation-test.yml` → `bash-syntax` |
 | `bootstrap-vscode-extensions.bash` / `.Tests.ps1` | own `check-test-*` workflow + `run-installation-test.yml` |
 | `bootstrap-powershell-profile.Tests.ps1` | own `check-test-*` workflow |
+| `bootstrap-mapping-sources.bash` / `.Tests.ps1` | own `check-test-*` workflow |
 | `skills-inventory-consistency.bash` / `.mjs` / `.Tests.ps1` | `run-installation-test.yml` (both jobs) |
 | `git-credential-helper.bash` | own `check-test-*` workflow |
 | `windows-terminal-settings.bash` | own `check-test-*` workflow |

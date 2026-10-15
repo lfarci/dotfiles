@@ -12,6 +12,21 @@ fail() {
   exit 1
 }
 
+# Symlinks are unavailable on some platforms (e.g. Git for Windows without
+# developer mode, where `ln -s` degrades to a copy). Symlink-dependent
+# assertions are skipped rather than reported as failures.
+can_symlink() {
+  local probe_dir
+  probe_dir="$(mktemp -d)"
+  : > "$probe_dir/src"
+  if ln -sfn "$probe_dir/src" "$probe_dir/link" 2>/dev/null && [[ -L "$probe_dir/link" ]]; then
+    rm -rf "$probe_dir"
+    return 0
+  fi
+  rm -rf "$probe_dir"
+  return 1
+}
+
 # bootstrap.sh declares mappings as "source:destination" strings inside
 # link_mappings. Return each quoted entry verbatim, one per line.
 parse_bash_mappings() {
@@ -129,13 +144,18 @@ test_seed_copies_missing_and_never_overwrites() (
 main() {
   test_extraction_finds_mappings
   test_sources_exist
-  test_link_all_creates_declared_links
+  if can_symlink; then
+    test_link_all_creates_declared_links
+  else
+    printf 'SKIP: link assertions (symlink creation unavailable)\n'
+  fi
   test_seed_copies_missing_and_never_overwrites
-  printf 'OK: bootstrap mapping sources verified (%s bash links, %s PowerShell links, %s bash seeds, %s PowerShell seeds)\n' \
+  printf 'mapping sources verified: %s bash links, %s PowerShell links, %s bash seeds, %s PowerShell seeds\n' \
     "$(parse_bash_mappings | sort -u | wc -l)" \
     "$(parse_powershell_mappings | sort -u | wc -l)" \
     "$(parse_bash_seeds | sort -u | wc -l)" \
     "$(parse_powershell_seeds | sort -u | wc -l)"
+  printf 'PASS: bootstrap-mapping-sources.bash\n'
 }
 
 main "$@"
