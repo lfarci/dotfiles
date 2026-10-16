@@ -19,12 +19,35 @@ Marketplace access, and no writes outside a per-test temp directory.
 | `git-credential-helper.bash` | own `check-test-*` workflow |
 | `windows-terminal-settings.bash` | own `check-test-*` workflow |
 | `docker-service-activation.bash` | own `check-test-*` workflow (runs `bash -n` first) |
-| `update-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs) |
-| `cleanup-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs) |
+| `update-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs); fast preconditions |
+| `cleanup-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs); fast refusals |
+| `e2e/run_update_cleanup.py` | `check-test-e2e.yml` (Linux + Windows) + `run-installation-test.yml` → `docker-e2e` (weekly/manual) |
 | `fixtures/` | shared stubs (e.g. `code-stub.bash`, in the ShellCheck lint scope) |
 
 Heavy Docker bootstrap builds (`os/*/Dockerfile`) run only on the weekly
 schedule or manual `run_installation=true`; see `docs/ci.md`.
+
+## End-to-end harness
+
+`tests/e2e/run_update_cleanup.py` is a Python (stdlib-only) harness that drives
+the **real** `scripts/update.{sh,ps1}` and `scripts/cleanup.{sh,ps1}`
+entrypoints against throwaway `$HOME` directories and real local git remotes.
+`--platform auto` picks `.ps1` on Windows and `.sh` elsewhere, so one file runs
+on Linux (local and container) and on `windows-latest`.
+
+- It is offline by default: the update scenarios use a controlled fixture
+  bootstrap, and the cleanup scenarios synthesize `.dotfiles_backup_*`
+  directories. Everything is confined to a per-run temp workspace; the real
+  `$HOME`, the real backups, and `~/.config` are never touched.
+- `--real-bootstrap` additionally runs the repository's real `bootstrap.sh`
+  against a fake `HOME` to create genuine backups. That installs
+  packages/CLIs (network), so it only runs in the weekly/manual
+  `run-installation-test.yml` → `docker-e2e` container job, mirroring
+  `os/*/Dockerfile`.
+- The stub suites (`update-script.*`, `cleanup-script.*`) are retained as fast,
+  offline precondition/refusal checks. The E2E harness is the authority for
+  end-to-end behavior; keep unit-level assertions minimal so the two do not
+  drift.
 
 ## Conventions
 

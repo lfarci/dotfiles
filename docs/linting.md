@@ -5,7 +5,8 @@ The Bash and PowerShell lint checks run separately in
 [`check-powershell-scripts.yml`](../.github/workflows/check-powershell-scripts.yml).
 Both workflows run on pull requests, pushes to `main`, and manual dispatches.
 They analyze explicit lists of maintained scripts; vendored skills under
-`config/agents/` are intentionally excluded.
+`config/agents/` are intentionally excluded. The Python end-to-end harness under
+`tests/e2e/` is not part of either lint scope.
 
 ## Bash
 

@@ -55,6 +55,20 @@ CI runs separate ShellCheck and PSScriptAnalyzer workflows for maintained
 scripts. See [`docs/linting.md`](docs/linting.md) for the scope, configuration,
 and local commands.
 
+### Testing
+
+`tests/` holds offline assertion suites for the bootstrap entrypoints and the
+update/cleanup scripts. A Python end-to-end harness drives the **real** scripts
+against throwaway `$HOME` directories and local git remotes:
+
+```bash
+python3 tests/e2e/run_update_cleanup.py                       # .sh scripts
+python3 tests/e2e/run_update_cleanup.py --platform windows    # .ps1 scripts (needs pwsh)
+```
+
+See [`tests/AGENTS.md`](tests/AGENTS.md) for the suites and
+[`docs/ci.md`](docs/ci.md) for how they run in CI.
+
 ### Line endings
 
 `.gitattributes` normalizes text to LF in the repository and forces `*.sh`,
