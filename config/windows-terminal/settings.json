@@ -31,7 +31,7 @@
     ],
     "copyFormatting": "none",
     "copyOnSelect": false,
-    "defaultProfile": "{adb170ec-f26b-5bd1-8b2b-898d0a8b764e}",
+    "defaultProfile": "{a1a74ac6-b4d3-411b-a358-5ef2123a5609}",
     "keybindings": 
     [
         {
@@ -80,17 +80,25 @@
                 "name": "Command Prompt"
             },
             {
+                "colorScheme": "Ubuntu",
                 "commandline": "wsl.exe -d Ubuntu-26.04",
+                "cursorShape": "filledBox",
                 "font": 
                 {
-                    "face": "JetBrainsMono Nerd Font"
+                    "face": "JetBrainsMono Nerd Font",
+                    "size": 13
                 },
-                "guid": "{adb170ec-f26b-5bd1-8b2b-898d0a8b764e}",
+                "guid": "{a1a74ac6-b4d3-411b-a358-5ef2123a5609}",
                 "hidden": false,
-                "name": "Ubuntu-26.04"
+                "name": "Ubuntu-26.04",
+                "pathTranslationStyle": "wsl",
+                "startingDirectory": "~",
+                "suppressApplicationTitle": true
             }
         ]
     },
     "schemes": [],
-    "themes": []
+    "tabWidthMode": "compact",
+    "themes": [],
+    "useAcrylicInTabRow": false
 }
