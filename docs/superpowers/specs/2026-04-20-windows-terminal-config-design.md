@@ -10,12 +10,21 @@ Store Windows Terminal configuration in this repository and have Windows bootstr
 - Keep the current repository pattern of repo-owned config files under `config/` plus symlinks created by `bootstrap.ps1`.
 - Avoid hardcoding a single Windows Terminal installation shape when resolving the live settings file destination.
 - Keep unrelated working tree changes untouched.
+- Keep the tracked config machine-independent: the default profile must resolve on a fresh supported Windows install, and no particular WSL distribution may be required.
 
 ## Design
 
 ### Tracked configuration
 
 Add `config/windows-terminal/settings.json` and seed it from the user's current live Windows Terminal settings file.
+
+### Portable defaults
+
+The tracked settings must not depend on the seeding machine:
+
+- `defaultProfile` points at the Windows PowerShell base GUID, which ships with a fresh supported Windows install.
+- Shared `JetBrainsMono Nerd Font` settings live in `profiles.defaults` so they apply to Command Prompt and to profiles Windows Terminal discovers dynamically, including WSL distros.
+- No WSL distribution is hardcoded; discovered WSL profiles appear through the existing `remainingProfiles` new-tab menu entry.
 
 ### Bootstrap behavior
 
@@ -36,6 +45,7 @@ Update the Windows README to show Windows Terminal settings as repo-managed rath
 ## Validation
 
 - Confirm the tracked `config/windows-terminal/settings.json` matches the current live Windows Terminal settings content.
+- Run `bash tests/windows-terminal-settings.bash` to confirm the default profile resolves, shared fonts are in `profiles.defaults`, and no machine-specific WSL profile is hardcoded.
 - Run a focused PowerShell parse check on `bootstrap.ps1` after the edit.
 - Review the Windows README for accurate destination and behavior descriptions.
 

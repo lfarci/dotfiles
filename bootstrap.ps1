@@ -164,12 +164,52 @@ function Link-All {
         @{ Src = 'config\vscode\keybindings.json';     Dst = "$env:APPDATA\Code\User\keybindings.json" }
         @{ Src = 'config\windows-terminal\settings.json'; Dst = $windowsTerminalSettingsPath }
         @{ Src = 'config\agents';                      Dst = "$HOME\.agents" }
+        @{ Src = 'config\agents\skills';               Dst = "$HOME\.copilot\skills" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
+        @{ Src = 'config\opencode\opencode.json';      Dst = "$HOME\.config\opencode\opencode.json" }
+        @{ Src = 'config\opencode\themes';             Dst = "$HOME\.config\opencode\themes" }
     )
 
     foreach ($m in $mappings) {
         $src = Join-Path $DotfilesDir $m.Src
         Backup-AndLink -Src $src -Dst $m.Dst
+    }
+}
+
+# ── Seed copies ──────────────────────────────────────────────────────────────
+
+# Files a client owns and rewrites after first creation (the TUI replaces
+# cli.json atomically on every settings change) are copied into place only
+# when the destination does not exist: a symlink would be destroyed and a
+# re-link would restore a stale copy over the live preferences.
+function Seed-IfMissing {
+    param([string]$Src, [string]$Dst)
+    $srcPath = Join-Path $DotfilesDir $Src
+    if (-not (Test-Path $srcPath)) {
+        Warn "Source missing: $srcPath"
+        return
+    }
+    if (Test-Path $Dst) {
+        Log "Seed destination exists, leaving untouched: $Dst"
+        return
+    }
+    if (Get-Item $Dst -Force -ErrorAction SilentlyContinue) {
+        Log "Seed destination exists as a dangling link, leaving untouched: $Dst"
+        return
+    }
+    New-Item -Path (Split-Path $Dst -Parent) -ItemType Directory -Force | Out-Null
+    Copy-Item -Path $srcPath -Destination $Dst
+    Log "Seeded $Dst"
+}
+
+# Seed entries carry a Seed key so the mapping-sources test can tell them
+# apart from symlink mappings.
+function Seed-All {
+    $seeds = @(
+        @{ Seed = 'config\opencode\cli.json'; Dst = "$HOME\.config\opencode\cli.json" }
+    )
+    foreach ($s in $seeds) {
+        Seed-IfMissing -Src $s.Seed -Dst $s.Dst
     }
 }
 
@@ -181,20 +221,37 @@ function Restore-Skills {
         return
     }
 
-    $lockFile = Join-Path $HOME '.agents\.skill-lock.json'
+    $agentsDir = Join-Path $HOME '.agents'
+    $lockFile = Join-Path $agentsDir '.skill-lock.json'
     if (-not (Test-Path $lockFile)) {
         Log "No .skill-lock.json found; skipping skills restore."
         return
     }
 
-    Log "Restoring skills from .skill-lock.json..."
-    Push-Location (Join-Path $HOME '.agents')
+    # `experimental_install` restores from .\skills-lock.json into .\.agents\skills\,
+    # so stage a directory whose .agents points at the tracked store and hand it the
+    # tracked lock verbatim (no hashes are recomputed or invented).
+    $staging = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-skills-$([guid]::NewGuid())"
     try {
-        npx skills experimental_install -y
-        if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
-        else                     { Log  "Skills restored." }
+        New-Item -Path $staging -ItemType Directory -Force | Out-Null
+        New-Item -Path (Join-Path $staging '.agents') -ItemType Junction -Target $agentsDir | Out-Null
+        Copy-Item -Path $lockFile -Destination (Join-Path $staging 'skills-lock.json')
+
+        Log "Restoring skills from .skill-lock.json..."
+        Push-Location $staging
+        try {
+            npx skills experimental_install -y
+            if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
+            else                     { Log  "Skills restored." }
+        } finally {
+            Pop-Location
+        }
+    } catch {
+        Warn "Skills restore failed: $($_.Exception.Message)"
     } finally {
-        Pop-Location
+        if (Test-Path $staging) {
+            Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 }
 
@@ -240,6 +297,32 @@ function Install-VSCodeExtensions {
 
 # ── PowerShell profile ──────────────────────────────────────────────────────
 
+function Resolve-DocumentsPath {
+    param([string]$KnownFolderPath)
+
+    # Windows can fail to resolve the known folder (for example when Documents
+    # is redirected to an unreachable network share). Fall back to the
+    # home-relative default so setup still completes.
+    if (-not $KnownFolderPath) {
+        return Join-Path $HOME 'Documents'
+    }
+
+    return $KnownFolderPath
+}
+
+function Get-DocumentsPath {
+    $knownFolderPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::MyDocuments)
+    return Resolve-DocumentsPath -KnownFolderPath $knownFolderPath
+}
+
+function Get-PowerShellProfilePath {
+    param([ValidateSet('WindowsPowerShell', 'PowerShell')][string]$Edition)
+
+    # Documents can be redirected (for example to OneDrive), so resolve the real
+    # special-folder path instead of assuming $HOME\Documents.
+    return Join-Path (Join-Path (Get-DocumentsPath) $Edition) 'Microsoft.PowerShell_profile.ps1'
+}
+
 function Add-OhMyPoshToProfile {
     param([string]$ProfilePath)
 
@@ -271,13 +354,10 @@ function Set-OhMyPoshProfile {
         return
     }
 
-    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles
-    $profiles = @(
-        "$HOME\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
-        "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-    )
-    foreach ($p in $profiles) {
-        Add-OhMyPoshToProfile -ProfilePath $p
+    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles, each in its
+    # actual loaded location derived from the real Documents folder.
+    foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+        Add-OhMyPoshToProfile -ProfilePath (Get-PowerShellProfilePath -Edition $edition)
     }
 }
 
@@ -295,6 +375,7 @@ function Invoke-DotfilesBootstrap {
     Install-VSCodeExtensions
     Install-NerdFont
     Link-All
+    Seed-All
     Restore-Skills
     Set-OhMyPoshProfile
 

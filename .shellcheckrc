@@ -1,0 +1,27 @@
+# ShellCheck baseline for this repository. Both CI and local runs read this
+# file, so `shellcheck <script>` behaves the same in both places.
+#
+# Note: the severity threshold deliberately is NOT set here. ShellCheck does not
+# treat `severity` as a config-file key, so it would have to be passed on the
+# command line (`--severity=warning`) for CI and local runs to agree.
+
+# The scripts are Bash; several use `[[ ]]` and arrays.
+shell=bash
+
+# Fail on warnings and errors, but not on stylistic notes. Pass this on the
+# command line (`--severity=warning`); see the note above. At this severity the
+# only notes left out are ones this repo cannot satisfy off-Linux:
+#   SC1091 - `/etc/os-release` is not readable when linting on macOS/Windows.
+#   SC2030/SC2031 - the Bash test mutates exported variables inside `( ... )`
+#     subshells on purpose, to keep each test case isolated.
+
+# Follow `source`d files so that cross-file usage is understood. Without this,
+# `tests/bootstrap-vscode-extensions.bash` reports a false SC2034 for
+# DOTFILES_DIR, a global that `bootstrap.sh` defines and consumes.
+external-sources=true
+
+# Resolve `source` targets relative to the script's own directory and the repo
+# root. This makes `# shellcheck source=../bootstrap.sh` and the
+# `source=/dev/null` directives around the OS-detection blocks resolve, so no
+# inline suppressions are needed.
+source-path=SCRIPTDIR:.
