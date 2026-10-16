@@ -191,4 +191,49 @@ try {
     }
 }
 
+# ── Dotfiles helpers are sourced from the profile ───────────────────────────
+
+$helpersRoot = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-helpers-profile-$([guid]::NewGuid())"
+$helpersDocuments = Join-Path $helpersRoot 'Documents'
+New-Item -Path $helpersDocuments -ItemType Directory -Force | Out-Null
+
+function Get-DocumentsPath { return $helpersDocuments }
+
+$defaultBeforeHelpers = Get-TreeFingerprint -Path $defaultEditionDir
+
+try {
+    Invoke-IsolatedProfileTest -ProvideOhMyPosh $false -Body {
+        Set-DotfilesHelpersProfile
+
+        foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+            $profilePath = Join-Path (Join-Path $helpersDocuments $edition) 'Microsoft.PowerShell_profile.ps1'
+            Assert-True (Test-Path $profilePath) "$edition profile was not created for the dotfiles helpers"
+            $content = Get-Content $profilePath -Raw
+            Assert-True ($content.Contains('.config\powershell\helpers.ps1') -or $content.Contains('.config/powershell/helpers.ps1')) "$edition profile does not source the dotfiles helpers"
+            Assert-True ($content.Contains('dotfiles-update')) "$edition profile does not reference dotfiles-update"
+        }
+
+        # Repeated bootstrap must not duplicate the dot-source line.
+        Set-DotfilesHelpersProfile
+        Set-DotfilesHelpersProfile
+        foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+            $profilePath = Join-Path (Join-Path $helpersDocuments $edition) 'Microsoft.PowerShell_profile.ps1'
+            $count = ([regex]::Matches((Get-Content $profilePath -Raw), 'helpers\.ps1')).Count
+            Assert-True ($count -eq 1) "repeated bootstrap duplicated the helpers dot-source in $profilePath"
+        }
+
+        # Existing user content must survive.
+        $wsProfile = Join-Path (Join-Path $helpersDocuments 'WindowsPowerShell') 'Microsoft.PowerShell_profile.ps1'
+        Add-Content -Path $wsProfile -Value '# user-owned line'
+        Set-DotfilesHelpersProfile
+        Assert-True ((Get-Content $wsProfile -Raw).Contains('# user-owned line')) 'existing profile content was not preserved by the helpers setup'
+    }
+} finally {
+    if (Test-Path $helpersRoot) {
+        Remove-Item $helpersRoot -Recurse -Force
+    }
+}
+
+Assert-True ((Get-TreeFingerprint -Path $defaultEditionDir) -eq $defaultBeforeHelpers) 'the default $HOME\Documents profile location was written to by the helpers setup'
+
 Write-Host 'PASS: bootstrap-powershell-profile.Tests.ps1'

@@ -42,6 +42,13 @@ directories older than a configurable age and only delete them when explicitly
 asked; both are a dry run by default. See `scripts/cleanup.sh --help` or
 `.\scripts\cleanup.ps1 -Help`.
 
+Both are also exposed as `dotfiles-update` and `dotfiles-clean`: Bash functions
+in `config/bash/.bash_aliases`, and PowerShell functions in
+`config/powershell/helpers.ps1` that `bootstrap.ps1` symlinks into
+`~\.config\powershell\` and dot-sources from the profile. Each forwards its
+arguments to the matching script, so `dotfiles-update --no-bootstrap` and
+`dotfiles-clean --apply` behave like the scripts themselves.
+
 Re-running the bootstrap is safe and idempotent: correct symlinks are left
 alone, and anything else is backed up to `~/.dotfiles_backup_<timestamp>/`
 before being re-linked. Only re-run it after changes to *what* gets installed

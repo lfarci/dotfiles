@@ -168,6 +168,7 @@ function Link-All {
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
         @{ Src = 'config\opencode\opencode.json';      Dst = "$HOME\.config\opencode\opencode.json" }
         @{ Src = 'config\opencode\themes';             Dst = "$HOME\.config\opencode\themes" }
+        @{ Src = 'config\powershell\helpers.ps1';      Dst = "$HOME\.config\powershell\helpers.ps1" }
     )
 
     foreach ($m in $mappings) {
@@ -361,6 +362,43 @@ function Set-OhMyPoshProfile {
     }
 }
 
+# Source the dotfiles helpers (dotfiles-update / dotfiles-clean) from the
+# profile, mirroring how ~/.bashrc sources ~/.bash_aliases. The helpers file is
+# a symlink into the repo, so edits to it take effect without re-bootstrapping.
+function Add-DotfilesHelpersToProfile {
+    param([string]$ProfilePath)
+
+    $helpersPath = Join-Path $HOME (Join-Path '.config' (Join-Path 'powershell' 'helpers.ps1'))
+    $snippet     = ". `"$helpersPath`""
+
+    $profileDir = Split-Path $ProfilePath -Parent
+    if (-not (Test-Path $profileDir)) {
+        New-Item -Path $profileDir -ItemType Directory -Force | Out-Null
+    }
+    if (-not (Test-Path $ProfilePath)) {
+        New-Item -Path $ProfilePath -ItemType File -Force | Out-Null
+        Log "Created profile: $ProfilePath"
+    }
+
+    $content = Get-Content $ProfilePath -Raw -ErrorAction SilentlyContinue
+    if ($content -and $content.Contains('helpers.ps1')) {
+        Log "Dotfiles helpers already configured in $ProfilePath"
+        return
+    }
+
+    Add-Content -Path $ProfilePath -Value "`n# Dotfiles helpers (dotfiles-update / dotfiles-clean)`n$snippet"
+    Log "Configured dotfiles helpers in $ProfilePath"
+}
+
+function Set-DotfilesHelpersProfile {
+    # Target both Windows PowerShell 5.1 and PowerShell 7+ profiles, like the
+    # oh-my-posh setup above. Unlike that step this does not depend on an
+    # external tool being present.
+    foreach ($edition in @('WindowsPowerShell', 'PowerShell')) {
+        Add-DotfilesHelpersToProfile -ProfilePath (Get-PowerShellProfilePath -Edition $edition)
+    }
+}
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 function Invoke-DotfilesBootstrap {
@@ -378,6 +416,7 @@ function Invoke-DotfilesBootstrap {
     Seed-All
     Restore-Skills
     Set-OhMyPoshProfile
+    Set-DotfilesHelpersProfile
 
     Log "Done! Restart your terminal for all changes to take effect."
     Log "Windows Terminal settings are linked from config\\windows-terminal\\settings.json."

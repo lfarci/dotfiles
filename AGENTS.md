@@ -15,6 +15,7 @@ repo file, never the link target.
 | `packages/` | package manifests: `apt.txt`, `dnf.txt`, `winget.txt` |
 | `config/` | tracked dotfiles, symlinked into `$HOME` |
 | `scripts/` | repo-maintained helper scripts (`update.sh`, `cleanup.sh`) |
+| `config/powershell/` | PowerShell profile helpers (`helpers.ps1`), dot-sourced from the profile |
 | `config/agents/` | vendored skills store — see `config/agents/AGENTS.md` |
 | `tests/` | assertion suites — see `tests/AGENTS.md` |
 | `os/` | OS installers + Dockerfiles — see `os/AGENTS.md` |
@@ -78,6 +79,7 @@ bash tests/skills-inventory-consistency.bash
 ```powershell
 # Maintained PowerShell lint scope (PSScriptAnalyzer 1.25.0)
 Invoke-ScriptAnalyzer -Path bootstrap.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
+Invoke-ScriptAnalyzer -Path config/powershell/helpers.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 Invoke-ScriptAnalyzer -Path scripts/update.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 Invoke-ScriptAnalyzer -Path scripts/cleanup.ps1 -Settings ./PSScriptAnalyzerSettings.psd1
 Invoke-ScriptAnalyzer -Path tests/bootstrap-vscode-extensions.Tests.ps1 -Settings ./PSScriptAnalyzerSettings.psd1

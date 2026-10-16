@@ -21,6 +21,7 @@ Marketplace access, and no writes outside a per-test temp directory.
 | `docker-service-activation.bash` | own `check-test-*` workflow (runs `bash -n` first) |
 | `update-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs); fast preconditions |
 | `cleanup-script.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs); fast refusals |
+| `dotfiles-helpers.bash` / `.Tests.ps1` | own `check-test-*` workflow (Bash + PowerShell jobs); repo resolution + forwarding |
 | `e2e/run_update_cleanup.py` | `check-test-e2e.yml` (Linux + Windows) + `run-installation-test.yml` → `docker-e2e` (weekly/manual) |
 | `fixtures/` | shared stubs (e.g. `code-stub.bash`, in the ShellCheck lint scope) |
 
