@@ -78,14 +78,14 @@
                 "name": "Command Prompt"
             },
             {
+                "commandline": "wsl.exe -d Ubuntu-26.04",
                 "font": 
                 {
                     "face": "JetBrainsMono Nerd Font"
                 },
                 "guid": "{adb170ec-f26b-5bd1-8b2b-898d0a8b764e}",
                 "hidden": false,
-                "name": "Ubuntu-26.04",
-                "source": "Microsoft.WSL"
+                "name": "Ubuntu-26.04"
             }
         ]
     },
