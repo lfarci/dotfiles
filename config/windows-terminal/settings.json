@@ -82,5 +82,7 @@
         ]
     },
     "schemes": [],
-    "themes": []
+    "tabWidthMode": "compact",
+    "themes": [],
+    "useAcrylicInTabRow": false
 }
