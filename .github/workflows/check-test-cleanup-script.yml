@@ -1,0 +1,30 @@
+name: "Check test: cleanup-script"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bash:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check Bash syntax
+        run: bash -n scripts/cleanup.sh tests/cleanup-script.bash
+      - name: Run Bash assertions
+        run: bash tests/cleanup-script.bash
+
+  powershell:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run PowerShell assertions
+        shell: powershell
+        run: .\tests\cleanup-script.Tests.ps1

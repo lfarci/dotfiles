@@ -14,15 +14,27 @@ Each lightweight assertion suite has a dedicated `check-test-<script>` workflow:
   runs the Bash and PowerShell bootstrap mapping/seed assertions.
 - [`check-test-bootstrap-opencode-install.yml`](../.github/workflows/check-test-bootstrap-opencode-install.yml)
   runs the OpenCode CLI installer guard assertions.
+- [`check-test-update-script.yml`](../.github/workflows/check-test-update-script.yml)
+  runs the `scripts/update.sh` precondition assertions and the
+  `scripts/update.ps1` PowerShell counterpart.
+- [`check-test-cleanup-script.yml`](../.github/workflows/check-test-cleanup-script.yml)
+  runs the `scripts/cleanup.sh` refusal/deletion assertions and the
+  `scripts/cleanup.ps1` PowerShell counterpart.
+- [`check-test-e2e.yml`](../.github/workflows/check-test-e2e.yml)
+  runs the Python end-to-end harness on Linux and Windows, driving the real
+  `scripts/update.*` and `scripts/cleanup.*` against throwaway HOMEs and local
+  git remotes.
 
 These workflows run on pull requests, pushes to `main`, and manual dispatch.
 The assertions live in `tests/`; each workflow checks out the repo and invokes
 its corresponding test script.
 
 [`run-installation-test.yml`](../.github/workflows/run-installation-test.yml)
-handles Bash syntax validation and the slower Docker installation matrix. Docker
-builds run only on the weekly schedule (Mondays 04:00 UTC) or when a manual run
-sets `run_installation` to `true`. They depend on Bash syntax validation and do
-not run on ordinary pull requests or pushes.
+handles Bash syntax validation, the slower Docker installation matrix, and the
+`docker-e2e` container job that runs the real bootstrap (network) for the
+end-to-end harness. These Docker builds run only on the weekly schedule
+(Mondays 04:00 UTC) or when a manual run sets `run_installation` to `true`. They
+depend on Bash syntax validation and do not run on ordinary pull requests or
+pushes.
 
 For lint workflows and local analyzer commands, see [`linting.md`](linting.md).

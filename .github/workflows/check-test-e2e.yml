@@ -1,0 +1,27 @@
+name: "Check test: e2e update/cleanup"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run end-to-end harness (Linux scripts)
+        run: python3 tests/e2e/run_update_cleanup.py
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run end-to-end harness (PowerShell scripts)
+        run: python tests/e2e/run_update_cleanup.py

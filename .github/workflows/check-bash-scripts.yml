@@ -32,5 +32,7 @@ jobs:
             os/ubuntu/install.sh \
             os/fedora/install.sh \
             os/windows/install.sh \
+            scripts/update.sh \
+            scripts/cleanup.sh \
             tests/bootstrap-vscode-extensions.bash \
             tests/fixtures/code-stub.bash

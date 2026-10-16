@@ -30,6 +30,18 @@ git pull --ff-only
 ./bootstrap.sh       # bootstrap.ps1 on Windows
 ```
 
+The same flow is available as `scripts/update.sh` (Bash) and
+`scripts/update.ps1` (PowerShell). Each refuses to run unless the checkout is on
+the expected branch with a clean working tree, then runs `git pull --ff-only`
+and the platform bootstrap. See `scripts/update.sh --help` or
+`.\scripts\update.ps1 -Help`.
+
+To reclaim disk space, `scripts/cleanup.sh` (Bash, `--apply`) and
+`scripts/cleanup.ps1` (PowerShell, `-Apply`) list stale `~/.dotfiles_backup_*`
+directories older than a configurable age and only delete them when explicitly
+asked; both are a dry run by default. See `scripts/cleanup.sh --help` or
+`.\scripts\cleanup.ps1 -Help`.
+
 Re-running the bootstrap is safe and idempotent: correct symlinks are left
 alone, and anything else is backed up to `~/.dotfiles_backup_<timestamp>/`
 before being re-linked. Only re-run it after changes to *what* gets installed
@@ -42,6 +54,20 @@ edit or pull them, with no bootstrap needed.
 CI runs separate ShellCheck and PSScriptAnalyzer workflows for maintained
 scripts. See [`docs/linting.md`](docs/linting.md) for the scope, configuration,
 and local commands.
+
+### Testing
+
+`tests/` holds offline assertion suites for the bootstrap entrypoints and the
+update/cleanup scripts. A Python end-to-end harness drives the **real** scripts
+against throwaway `$HOME` directories and local git remotes:
+
+```bash
+python3 tests/e2e/run_update_cleanup.py                       # .sh scripts
+python3 tests/e2e/run_update_cleanup.py --platform windows    # .ps1 scripts (needs pwsh)
+```
+
+See [`tests/AGENTS.md`](tests/AGENTS.md) for the suites and
+[`docs/ci.md`](docs/ci.md) for how they run in CI.
 
 ### Line endings
 

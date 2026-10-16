@@ -32,6 +32,8 @@ jobs:
 
           $files = @(
             'bootstrap.ps1'
+            'scripts/update.ps1'
+            'scripts/cleanup.ps1'
             'tests/bootstrap-vscode-extensions.Tests.ps1'
           )
 

@@ -75,3 +75,22 @@ jobs:
             --build-arg REPO_REF="${{ github.sha }}" \
             -f os/${{ matrix.os }}/Dockerfile \
             -t dotfiles-bootstrap-${{ matrix.os }} .
+
+  docker-e2e:
+    # Expensive: runs the real bootstrap (network) inside the E2E container, so
+    # it shares the weekly/manual schedule with the installation matrix.
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_installation)
+    needs: [bash-syntax]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build E2E image (runs the Python harness)
+        run: |
+          docker build \
+            --build-arg REPO_URL="https://github.com/${{ github.repository }}" \
+            --build-arg REPO_REF="${{ github.sha }}" \
+            -f tests/e2e/Dockerfile \
+            -t dotfiles-e2e .
