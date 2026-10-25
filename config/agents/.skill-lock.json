@@ -37,24 +37,6 @@
       "installedAt": "2026-04-20T00:02:16.365Z",
       "updatedAt": "2026-10-09T19:14:56.035Z"
     },
-    "polish": {
-      "source": "pbakaus/impeccable",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/pbakaus/impeccable.git",
-      "skillPath": ".agents/skills/polish/SKILL.md",
-      "skillFolderHash": "9160920cb415f359532f590bc303d5b44430f97a",
-      "installedAt": "2026-04-20T00:02:28.531Z",
-      "updatedAt": "2026-04-20T00:02:28.531Z"
-    },
-    "optimize": {
-      "source": "pbakaus/impeccable",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/pbakaus/impeccable.git",
-      "skillPath": ".agents/skills/optimize/SKILL.md",
-      "skillFolderHash": "e00f2fc4c03e6722dde7cb247b7da2c5e5eea65d",
-      "installedAt": "2026-04-20T00:02:31.516Z",
-      "updatedAt": "2026-04-20T00:02:31.516Z"
-    },
     "pdf": {
       "source": "anthropics/skills",
       "sourceType": "github",
@@ -91,15 +73,6 @@
       "skillFolderHash": "b866bcfb57b780c10b587c7b543e871a91661ce0",
       "installedAt": "2026-04-20T00:03:00.021Z",
       "updatedAt": "2026-05-11T18:34:15.963Z"
-    },
-    "gh-cli": {
-      "source": "github/awesome-copilot",
-      "sourceType": "github",
-      "sourceUrl": "https://github.com/github/awesome-copilot.git",
-      "skillPath": "skills/gh-cli/SKILL.md",
-      "skillFolderHash": "437437f7f20bcdbbdb3081cf164435a388c0a39a",
-      "installedAt": "2026-04-22T20:39:21.391Z",
-      "updatedAt": "2026-04-22T20:39:21.391Z"
     },
     "flouz": {
       "source": "lfarci/flouz",
@@ -169,39 +142,36 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/productivity/grill-me/SKILL.md",
-      "skillFolderHash": "9cdbb4b8f7a3aeaef82e6230c9e823500d4a8a1214c726cf342cf9829d34fc7d",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "3df14e2d3a89459bf300614be9247e3ce74798f8",
       "installedAt": "2026-10-09T19:15:49.775Z",
-      "updatedAt": "2026-10-09T19:15:49.775Z"
+      "updatedAt": "2026-10-25T12:09:59.192Z"
     },
     "xlsx": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/anthropics/skills.git",
       "skillPath": "skills/xlsx/SKILL.md",
-      "skillFolderHash": "f5945e6e76dc7c178375e5cdf3140959b30cbcd4570ec3dc62296812259fc38d",
-      "pluginName": "document-skills",
+      "skillFolderHash": "fe6471cc9b5b97aae0b576ccb92ffd9b0207589d",
       "installedAt": "2026-10-09T19:16:31.613Z",
-      "updatedAt": "2026-10-09T19:16:31.613Z"
+      "updatedAt": "2026-10-25T12:09:58.354Z"
     },
     "grilling": {
       "source": "mattpocock/skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/mattpocock/skills.git",
       "skillPath": "skills/productivity/grilling/SKILL.md",
-      "skillFolderHash": "ef1641a2047b71b60f1942cd35efb47d3afc9d584dff5a0b01f8c7db923aaa08",
-      "pluginName": "mattpocock-skills",
+      "skillFolderHash": "28aceb4c9567b985cb47f7db88cf23c9f33af8b8",
       "installedAt": "2026-10-09T19:16:39.506Z",
-      "updatedAt": "2026-10-09T19:16:39.506Z"
+      "updatedAt": "2026-10-25T12:10:00.359Z"
     },
     "drawio-skill": {
       "source": "agents365-ai/drawio-skill",
       "sourceType": "github",
       "sourceUrl": "https://github.com/agents365-ai/drawio-skill.git",
       "skillPath": "skills/drawio-skill/SKILL.md",
-      "skillFolderHash": "1ec9d43f48f9bea066ace6cfbfdd62ac7be133f24d0129205d7e144eef3476d6",
+      "skillFolderHash": "ede358e31646aa422803be6899681cddadaabdf2",
       "installedAt": "2026-10-09T19:27:41.931Z",
-      "updatedAt": "2026-10-09T19:27:41.931Z"
+      "updatedAt": "2026-10-25T12:10:02.255Z"
     }
   },
   "dismissed": {
