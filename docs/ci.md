@@ -24,6 +24,10 @@ Each lightweight assertion suite has a dedicated `check-test-<script>` workflow:
   runs the Python end-to-end harness on Linux and Windows, driving the real
   `scripts/update.*` and `scripts/cleanup.*` against throwaway HOMEs and local
   git remotes.
+- [`check-test-dotfiles-helpers.yml`](../.github/workflows/check-test-dotfiles-helpers.yml)
+  runs the `dotfiles-update` / `dotfiles-clean` helper assertions: the Bash
+  wrappers in `config/bash/.bash_aliases` and the PowerShell helpers in
+  `config/powershell/helpers.ps1`.
 
 These workflows run on pull requests, pushes to `main`, and manual dispatch.
 The assertions live in `tests/`; each workflow checks out the repo and invokes

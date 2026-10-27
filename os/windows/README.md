@@ -95,6 +95,11 @@ The authoritative list is `packages/winget.txt`; the table mirrors it.
 | `config/claude/settings.json` | `~\.claude\settings.json` |
 | `config/opencode/opencode.json` | `~\.config\opencode\opencode.json` |
 | `config/opencode/themes` | `~\.config\opencode\themes` |
+| `config/powershell/helpers.ps1` | `~\.config\powershell\helpers.ps1` |
+
+`config/powershell/helpers.ps1` is also dot-sourced from both PowerShell
+profiles by `bootstrap.ps1`, exposing `dotfiles-update` and `dotfiles-clean`
+(thin wrappers over `scripts\update.ps1` and `scripts\cleanup.ps1`).
 
 `config/opencode/cli.json` (theme selection) is not symlinked: it is copied to
 `~\.config\opencode\cli.json` on the first bootstrap only, and the TUI owns
