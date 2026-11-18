@@ -34,7 +34,6 @@ jobs:
       - name: Test backup and link behavior
         run: bash tests/bootstrap-backup.bash
 
-  powershell-tests:
   powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
