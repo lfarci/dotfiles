@@ -17,9 +17,3 @@ config/bash/.bash_aliases text eol=lf
 # ShellCheck report SC1017 on its own config file and fail the run, so it must
 # stay LF on Windows too.
 .shellcheckrc text eol=lf
-
-# NOTE: config/agents/** (upstream-vendored skill content) is deliberately left
-# to `* text=auto`. Marking it `-text` or `eol=lf` would report every vendored
-# file as modified on a CRLF worktree and rewrite stored blobs whose form is
-# owned upstream. Lint scoping, not Git attributes, keeps that tree out of
-# ShellCheck and PSScriptAnalyzer.

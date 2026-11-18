@@ -127,7 +127,6 @@ link_all() {
     "config/vscode/keybindings.json:.config/Code/User/keybindings.json" \
     "config/git/.gitignore_global:.gitignore_global" \
     "config/bash/.inputrc:.inputrc" \
-    "config/agents:.agents" \
     "config/claude/settings.json:.claude/settings.json" \
     "config/opencode/opencode.json:.config/opencode/opencode.json" \
     "config/opencode/themes:.config/opencode/themes"
@@ -249,46 +248,6 @@ detect_os() {
   echo "unknown"
 }
 
-install_skills() {
-  if ! command -v npx >/dev/null 2>&1; then
-    warn "npx not found; skipping skills restore"
-    return
-  fi
-
-  local agents_dir="$HOME/.agents"
-  local lock_file="$agents_dir/.skill-lock.json"
-  if [[ ! -f "$lock_file" ]]; then
-    log "No .skill-lock.json found; skipping skills restore"
-    return
-  fi
-
-  # `experimental_install` restores from ./skills-lock.json into ./.agents/skills/,
-  # so stage a directory whose .agents points at the tracked store and hand it the
-  # tracked lock verbatim (no hashes are recomputed or invented).
-  local staging
-  if ! staging="$(mktemp -d)"; then
-    warn "Skills restore failed: cannot create staging directory"
-    return
-  fi
-
-  if ! ln -s "$agents_dir" "$staging/.agents" 2>/dev/null; then
-    warn "Skills restore failed: cannot create staging symlink"
-    rm -rf "$staging"
-    return
-  fi
-
-  cp "$lock_file" "$staging/skills-lock.json"
-
-  log "Restoring skills from .skill-lock.json..."
-  if (cd "$staging" && npx skills experimental_install -y); then
-    log "Skills restored"
-  else
-    warn "Skills restore failed"
-  fi
-
-  rm -rf "$staging"
-}
-
 install_nvm_node() {
   local nvm_dir="${NVM_DIR:-$HOME/.nvm}"
 
@@ -387,7 +346,6 @@ main() {
   seed_all
   install_nvm_node
   install_vscode_extensions
-  install_skills
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then

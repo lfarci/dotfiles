@@ -45,7 +45,7 @@ asked; both are a dry run by default. See `scripts/cleanup.sh --help` or
 Re-running the bootstrap is safe and idempotent: correct symlinks are left
 alone, and anything else is backed up to `~/.dotfiles_backup_<timestamp>/`
 before being re-linked. Only re-run it after changes to *what* gets installed
-or linked — new symlink mappings, packages, VS Code extensions, or skills.
+or linked — new symlink mappings, packages, or VS Code extensions.
 Changes to the *contents* of already-linked files take effect as soon as you
 edit or pull them, with no bootstrap needed.
 
@@ -81,32 +81,3 @@ still CRLF and ShellCheck reports `SC1017` for it. Refresh the affected files
 ```powershell
 Remove-Item bootstrap.sh, .shellcheckrc; git checkout -- bootstrap.sh .shellcheckrc
 ```
-`config/agents/` is intentionally left to `* text=auto` rather than being
-marked `-text`: those files are owned upstream and marking the tree binary would
-report every vendored file as modified on a CRLF worktree.
-
-### Skills
-
-Skills are installed straight into the repo: `~/.agents` and `~/.copilot/skills`
-are symlinks into `config/agents`. Install and update them with the skills CLI
-so `.skill-lock.json` stays in sync, then commit both together:
-
-```bash
-npx skills add <source> --skill <name> --yes --global
-npx skills update
-git add config/agents
-git commit -m "Add <skill> skill"
-```
-
-Committing `config/agents/skills/` without the matching `.skill-lock.json`
-change means the skill will not be restored on a fresh machine. The two
-inventories are checked by name (not just by count) so an orphaned lock entry
-cannot hide behind an unlocked skill directory:
-
-```bash
-node tests/skills-inventory-consistency.mjs
-```
-
-Skills are vendored on purpose, and skill refreshes are reviewed separately from
-bootstrap changes. See [`config/agents/README.md`](config/agents/README.md) for
-the provenance and maintenance policy.

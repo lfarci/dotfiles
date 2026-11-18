@@ -1,6 +1,6 @@
 # AGENTS.md — tests
 
-Assertion suites for the bootstrap entrypoints and the skills store. They are
+Assertion suites for the bootstrap entrypoints and the update/cleanup scripts. They are
 plain scripts (Bash) or plain PowerShell scripts — **not** a shared test
 framework — and each runs offline: no network, no package installs, no
 Marketplace access, and no writes outside a per-test temp directory.
@@ -10,12 +10,10 @@ Marketplace access, and no writes outside a per-test temp directory.
 | Suite | CI |
 | --- | --- |
 | `bootstrap-backup.bash` | `run-installation-test.yml` → `bash-syntax` |
-| `bootstrap-skills-restore.bash` | `run-installation-test.yml` → `bash-syntax` |
 | `bootstrap-vscode-extensions.bash` / `.Tests.ps1` | own `check-test-*` workflow + `run-installation-test.yml` |
 | `bootstrap-powershell-profile.Tests.ps1` | own `check-test-*` workflow |
 | `bootstrap-mapping-sources.bash` / `.Tests.ps1` | own `check-test-*` workflow |
 | `bootstrap-opencode-install.bash` | own `check-test-*` workflow |
-| `skills-inventory-consistency.bash` / `.mjs` / `.Tests.ps1` | `run-installation-test.yml` (both jobs) |
 | `git-credential-helper.bash` | own `check-test-*` workflow |
 | `windows-terminal-settings.bash` | own `check-test-*` workflow |
 | `docker-service-activation.bash` | own `check-test-*` workflow (runs `bash -n` first) |

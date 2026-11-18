@@ -31,16 +31,9 @@ jobs:
       - name: Test VS Code extension installer
         run: bash tests/bootstrap-vscode-extensions.bash
 
-      - name: Test skills restore staging
-        run: bash tests/bootstrap-skills-restore.bash
-
       - name: Test backup and link behavior
         run: bash tests/bootstrap-backup.bash
 
-      - name: Check skills inventory consistency
-        run: bash tests/skills-inventory-consistency.bash
-
-  powershell-tests:
   powershell-vscode-extensions:
     runs-on: windows-latest
     steps:
@@ -50,10 +43,6 @@ jobs:
       - name: Test VS Code extension installer
         shell: powershell
         run: .\tests\bootstrap-vscode-extensions.Tests.ps1
-
-      - name: Check skills inventory consistency
-        shell: powershell
-        run: .\tests\skills-inventory-consistency.Tests.ps1
 
   docker-bootstrap:
     # Expensive: only on the weekly schedule or an explicit manual request.

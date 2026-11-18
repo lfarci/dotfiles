@@ -2,7 +2,7 @@
 *.bak
 *.bak.*
 
-# Python bytecode from skill scripts
+# Python bytecode
 __pycache__/
 *.py[cod]
 
