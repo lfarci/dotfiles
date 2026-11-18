@@ -7,8 +7,8 @@
 
     ExcludeRules = @(
         # Verb/noun naming guidelines on pre-existing public function names
-        # (Install-WingetPackages, Link-All, Restore-Skills,
-        # Install-VSCodeExtensions). Renaming them is a breaking change for
+        # (Install-WingetPackages, Link-All, Install-VSCodeExtensions).
+        # Renaming them is a breaking change for
         # anyone calling or dot-sourcing these functions.
         'PSUseSingularNouns'
         'PSUseApprovedVerbs'

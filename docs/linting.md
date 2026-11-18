@@ -4,9 +4,8 @@ The Bash and PowerShell lint checks run separately in
 [`check-bash-scripts.yml`](../.github/workflows/check-bash-scripts.yml) and
 [`check-powershell-scripts.yml`](../.github/workflows/check-powershell-scripts.yml).
 Both workflows run on pull requests, pushes to `main`, and manual dispatches.
-They analyze explicit lists of maintained scripts; vendored skills under
-`config/agents/` are intentionally excluded. The Python end-to-end harness under
-`tests/e2e/` is not part of either lint scope.
+They analyze explicit lists of maintained scripts. The Python end-to-end
+harness under `tests/e2e/` is not part of either lint scope.
 
 ## Bash
 
@@ -44,5 +43,4 @@ Invoke-ScriptAnalyzer -Path tests/bootstrap-vscode-extensions.Tests.ps1 -Setting
 ```
 
 The analyzer settings explain the narrow excluded rules. The `.gitattributes`
-file keeps maintained shell and PowerShell scripts at LF; vendored skill files
-are deliberately not normalized or linted as locally maintained scripts.
+file keeps maintained shell and PowerShell scripts at LF.

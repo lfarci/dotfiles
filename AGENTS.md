@@ -15,7 +15,6 @@ repo file, never the link target.
 | `packages/` | package manifests: `apt.txt`, `dnf.txt`, `winget.txt` |
 | `config/` | tracked dotfiles, symlinked into `$HOME` |
 | `scripts/` | repo-maintained helper scripts (`update.sh`, `cleanup.sh`) |
-| `config/agents/` | vendored skills store — see `config/agents/AGENTS.md` |
 | `tests/` | assertion suites — see `tests/AGENTS.md` |
 | `os/` | OS installers + Dockerfiles — see `os/AGENTS.md` |
 | `docs/` | CI/linting references; design specs in `docs/superpowers/specs/` |
@@ -27,7 +26,7 @@ repo file, never the link target.
 These are load-bearing; preserve them in any change.
 
 - **Idempotent and safe to re-run.** A correct symlink is left alone; only new
-  mappings/packages/extensions/skills require a re-run. Content edits take
+  mappings/packages/extensions require a re-run. Content edits take
   effect without one.
 - **Back up, never delete.** A destination that is not already the correct
   symlink is moved to `~/.dotfiles_backup_<timestamp>/` before linking. If the
@@ -35,16 +34,16 @@ These are load-bearing; preserve them in any change.
   and skip the link — never delete it as a fallback.
 - **`bootstrap.sh` refuses to run as root** unless `DOTFILES_ALLOW_ROOT=1`.
 - **Bash and PowerShell stay in parity.** `bootstrap.sh` and `bootstrap.ps1`
-  implement the same behavior (manifest parsing, extension install, backup/link,
-  skills restore). A change to one usually needs the matching change in the
+  implement the same behavior (manifest parsing, extension install, backup/link).
+  A change to one usually needs the matching change in the
   other.
 - **Optional steps warn and continue; contract steps fail.** Use the existing
   `log`/`warn` (Bash) and `Log`/`Warn` (PowerShell) helpers. Missing tools such
-  as `npx` and `code` on native Linux warn and skip; a missing `code` on
+  as `code` on native Linux warn and skip; a missing `code` on
   Windows/WSL is actionable and fails.
 - **Link mappings are explicit.** Bash: `link_all`'s `link_mappings` list.
   PowerShell: `Link-All`'s `$mappings` array. Keep the **shared** mappings in
-  sync across both (git, oh-my-posh, VS Code, `config/agents`, Claude) — but
+  sync across both (git, oh-my-posh, VS Code, Claude, OpenCode) — but
   the platform-specific ones are deliberate: Bash links `.bashrc`,
   `.bash_aliases`, `.inputrc`, and Ghostty; PowerShell links Windows Terminal
   settings. Destinations also legitimately differ per OS (e.g. VS Code lives
@@ -55,8 +54,6 @@ These are load-bearing; preserve them in any change.
 `.gitattributes` normalizes text to LF. `*.sh`, `*.bash`, `*.ps1`,
 `config/bash/.bashrc`, `config/bash/.bash_aliases`, and `.shellcheckrc` are
 pinned to `eol=lf` because CRLF breaks ShellCheck (`SC1017`) or Linux execution.
-`config/agents/**` is deliberately left to `text=auto` — do **not** add
-`-text` or `eol=lf` there (see `config/agents/AGENTS.md`).
 
 ## Verify before committing
 
@@ -72,7 +69,6 @@ shellcheck --severity=warning \
 # Assertion suites (see tests/AGENTS.md for the full set)
 bash tests/bootstrap-backup.bash
 bash tests/bootstrap-vscode-extensions.bash
-bash tests/skills-inventory-consistency.bash
 ```
 
 ```powershell
@@ -94,7 +90,3 @@ workflow (see `tests/AGENTS.md`).
   in `config/vscode/extensions.txt`, parsed by both entrypoints.
 - Keep unrelated working-tree changes out of your commit. When a change is
   intentionally broader than the task, say so.
-- **Skill refreshes are reviewed separately from bootstrap changes.** One
-  refresh per PR with the lock diff and content diff together; never let a
-  bootstrap/symlink change ride along with a refresh. See
-  `config/agents/AGENTS.md`.

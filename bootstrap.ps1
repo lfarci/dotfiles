@@ -163,7 +163,6 @@ function Link-All {
         @{ Src = 'config\vscode\settings.json';        Dst = "$env:APPDATA\Code\User\settings.json" }
         @{ Src = 'config\vscode\keybindings.json';     Dst = "$env:APPDATA\Code\User\keybindings.json" }
         @{ Src = 'config\windows-terminal\settings.json'; Dst = $windowsTerminalSettingsPath }
-        @{ Src = 'config\agents';                      Dst = "$HOME\.agents" }
         @{ Src = 'config\claude\settings.json';        Dst = "$HOME\.claude\settings.json" }
         @{ Src = 'config\opencode\opencode.json';      Dst = "$HOME\.config\opencode\opencode.json" }
         @{ Src = 'config\opencode\themes';             Dst = "$HOME\.config\opencode\themes" }
@@ -209,48 +208,6 @@ function Seed-All {
     )
     foreach ($s in $seeds) {
         Seed-IfMissing -Src $s.Seed -Dst $s.Dst
-    }
-}
-
-# ── Skills restore ──────────────────────────────────────────────────────────
-
-function Restore-Skills {
-    if (-not (Get-Command npx -ErrorAction SilentlyContinue)) {
-        Warn "npx not found; skipping skills restore."
-        return
-    }
-
-    $agentsDir = Join-Path $HOME '.agents'
-    $lockFile = Join-Path $agentsDir '.skill-lock.json'
-    if (-not (Test-Path $lockFile)) {
-        Log "No .skill-lock.json found; skipping skills restore."
-        return
-    }
-
-    # `experimental_install` restores from .\skills-lock.json into .\.agents\skills\,
-    # so stage a directory whose .agents points at the tracked store and hand it the
-    # tracked lock verbatim (no hashes are recomputed or invented).
-    $staging = Join-Path ([System.IO.Path]::GetTempPath()) "dotfiles-skills-$([guid]::NewGuid())"
-    try {
-        New-Item -Path $staging -ItemType Directory -Force | Out-Null
-        New-Item -Path (Join-Path $staging '.agents') -ItemType Junction -Target $agentsDir | Out-Null
-        Copy-Item -Path $lockFile -Destination (Join-Path $staging 'skills-lock.json')
-
-        Log "Restoring skills from .skill-lock.json..."
-        Push-Location $staging
-        try {
-            npx skills experimental_install -y
-            if ($LASTEXITCODE -ne 0) { Warn "Skills restore exited $LASTEXITCODE" }
-            else                     { Log  "Skills restored." }
-        } finally {
-            Pop-Location
-        }
-    } catch {
-        Warn "Skills restore failed: $($_.Exception.Message)"
-    } finally {
-        if (Test-Path $staging) {
-            Remove-Item $staging -Recurse -Force -ErrorAction SilentlyContinue
-        }
     }
 }
 
@@ -375,7 +332,6 @@ function Invoke-DotfilesBootstrap {
     Install-NerdFont
     Link-All
     Seed-All
-    Restore-Skills
     Set-OhMyPoshProfile
 
     Log "Done! Restart your terminal for all changes to take effect."

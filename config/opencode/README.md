@@ -63,10 +63,10 @@ substitution such as `{env:VAR}` instead.
 
 ## Skills
 
-OpenCode discovers global skills from `~/.agents/skills` as a compatibility
-source, and `~/.agents` is already symlinked to the vendored store in
-`config/agents/`. Do not copy or link skills into this directory; it would
-shadow the store for no benefit.
+Skills are no longer managed in this repository. They live in
+[lfarci/skills](https://github.com/lfarci/skills). This repo does not
+symlink `~/.agents` or install skills during bootstrap. Do not copy or
+link skills into this directory.
 
 ## Future surfaces
 

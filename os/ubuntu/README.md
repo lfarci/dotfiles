@@ -51,7 +51,7 @@ git pull --ff-only
 `bootstrap.sh` is idempotent — re-running it is safe. Config files are symlinked,
 so edits to `config/` (including a `git pull` that changes them) apply
 immediately; re-run the bootstrap only when symlink mappings, packages,
-extensions, or skills change.
+or extensions change.
 
 `scripts/update.sh` wraps this flow (`--help`): it refuses unless the checkout
 is on the expected branch with a clean working tree, then runs

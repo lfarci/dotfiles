@@ -90,8 +90,6 @@ The authoritative list is `packages/winget.txt`; the table mirrors it.
 | `config/vscode/settings.json` | `%APPDATA%\Code\User\settings.json` |
 | `config/vscode/keybindings.json` | `%APPDATA%\Code\User\keybindings.json` |
 | `config/windows-terminal/settings.json` | Windows Terminal `settings.json` |
-| `config/agents` | `~\.agents` |
-| `config/agents/skills` | `~\.copilot\skills` |
 | `config/claude/settings.json` | `~\.claude\settings.json` |
 | `config/opencode/opencode.json` | `~\.config\opencode\opencode.json` |
 | `config/opencode/themes` | `~\.config\opencode\themes` |
@@ -165,7 +163,7 @@ Then repeat `git pull` + `./bootstrap.sh` inside WSL for the Linux side.
 Both bootstraps are idempotent — re-running is safe. Config files are
 symlinked, so edits to `config/` (including a `git pull` that changes them)
 apply immediately; re-run a bootstrap only when symlink mappings, packages,
-extensions, or skills change.
+or extensions change.
 
 ## Notes
 
